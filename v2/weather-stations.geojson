@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+          "name": "Ayr DPI BOM Stn",
+          "temp": 24.5,
+          "wind_dir": "E",
+          "wind_spd": 15,
+          "rain": 0,
+          "full_canopy_cwu": 4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.38,
+          -19.62
+        ]
+      }
+    }
+  ]
+}

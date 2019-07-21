@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- # Pull in style sheets -->
+<!-- ## link to some generic icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- ## leaflets stylesheet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>   
+  
+<!-- # Pull in data and script files -->
+<!-- ## leaflet -->
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+   crossorigin=""></script>
+<!-- ## geojson for clusters -->
+<script src="Burdekin_3ClusterMap.geojson" type="text/javascript"></script>
+<!-- ## geojson for climate page -->
+<script src="Burdekin_climate.geojson" type="text/javascript"></script>
+<!-- ## colorbrewer palletes  these are used for the climate data-->
+<script src="http://colorbrewer2.org/export/colorbrewer.js" type="text/javascript"></script>
+<!-- ## custom css-->
+<link rel="stylesheet"  href="cssip.css"></script>
+
+<!-- ## jquery-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- # plotly -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+<!-- Start of the body of the page -->
+<body>
+
+<!-- # This is the header  -->
+<div class="top-container" style="background-image: url('canebanner1.jpg'); background-size: cover; padding: 2px; color: white">
+	<h1><img src="/cssipicon.png" class="w3-image" style="width: 50px; height: 40px"></img> CSSIP</h1>
+  </div>
+
+<!-- # This is the tabs they are actually links to different html files  fa fa-fw ect. is calling the icon database 
+class="active" is the open page -->
+
+<div class="navbar">
+  <a href="index.html"><i class="fa fa-fw fa-sun-o"></i> Latest</a> 
+  <a href="CSSIP-forecast.html"><i class="fa fa-fw fa-search"></i> Forecast</a> 
+  <a href="CSSIP-myfarm.html"><i class="fa fa-fw fa-home"></i> My Farm</a> 
+  <a class="active" href="CSSIP-Climate.html"><i class="fa fa-fw fa-cloud"></i> Climate</a>
+</div>
+
+<!-- # This is a placeholder div for the map. It is restricted to 600px high -->
+<div id="climatemap" style="width: 100%; height: 500px"></div>
+
+
+
+<!-- # This is javascript used to build the map -->
+
+<script>
+// initiallize some variables
+
+// set variable my map as the base map. The map is located within the Burdekin by default with a zoom of 10
+	var mymap = L.map('climatemap').setView([-19.8,147.3], 10);
+	
+// Adds a base tile layer to the mymap variable
+// At the moment it is using mapboxs' satellite image. This requires an access token which 
+// the project currently doesn't have.
+// L is the leaflet js file. so L.tilelayer() is creating a tilelayer using leaflet.
+// .addTo is a 'method' that leaflet tilelayers have.
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.satellite'
+	}).addTo(mymap);
+		
+// varind, perind and prop are used to choose what climate data is shown. 
+// varind is used for the variable e.g. Rainfall while perind is used for the period e.g. Annual.
+// prop is the name of the varibale in the database.
+
+    let varind = 'Rain';
+    let perind = 'Ann';
+    let prop = 'Ann_Rain';
+	let zonelayer;
+	
+// CUSTOM FUNCTIONS 
+
+//   getMin
+//   -------
+// essentially this is pulling out a column called 'prop' out of the database 'arr'
+// only it's not a 'table'. The structure it expects is O.properties.Ann_rain.
+// The geoJSON has the structure climate_data.feature.properties.Ann_rain.
+// so you have to pass it climate_data.features.
+// It's then finding the minimum value.
+// Note this does not return a location. (i.e. don't know which 'row' had the min.
+
+	function getMin(arr,prop='Ann_Rain'){ 
+		return Math.min.apply(Math, arr.map(function(o){return o.properties[prop]}));
+	}
+
+//   getMax
+//   -------
+// gets the minimum of Ann_Rain if given arr = climate_data.features 
+
+	function getMax(arr,prop='Ann_Rain'){ 
+		return Math.max.apply(Math, arr.map(function(o){return o.properties[prop]}));
+	}
+
+//   minmaxscale
+//   -------
+// scale a value using min-max scale.
+// This gives a value between 0 and 1.
+// inv inverts the calculation, returning the actual value
+// given a d of between 0 and 1.
+// inverting was needed to get the legend labels.
+
+	function minmaxscale(d,mn,mx,inv=false){ 
+		if(!inv){return (d-mn)/(mx-mn)} else {return (d*(mx-mn))+mn};
+	}
+
+//  getColor
+//  --------
+// This turns a value into a representative color
+// This uses the colorbrewer RdYlBu.11 scheme
+// it therefore only makes sense if there are 11 levels
+// Note in future should be able to find a general continuous colour scale function.
+
+// White '#FFFFFF' is used for missing values
+// The value d is minmax scaled based on given min and max.
+// The value is then multiplied by 10 and rounded down to the nearest int
+// This gives a value from 0 to 10 which is used to select the colour
+// Colors go from red (0) to blue (10). to invert the order set inv=true
+  
+	function getColor(d,mn,mx,inv=false){
+		let t = minmaxscale(d,mn,mx);
+		if(typeof(t) === 'number' && 0 >= t <=1) {
+		t = Math.floor(t*10);
+		if(inv){
+		t = (10 - t);}
+		return colorbrewer.RdYlBu[11][t];
+		} else {
+		return '#FFFFFF';
+		};
+	};
+
+//  style
+//  --------
+// This sets some style parameters for use with the climate_data layer
+// primarily this is used to update the climate data colors
+// Note that in getColor we are checking that prop is a rain variable
+// This only works as all column names use three characters for period eg. Ann 
+
+	function style(Feature,mn,mx,prop='Ann_Rain') {
+
+		return {
+			weight: 0,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7,
+			fillColor: getColor(Feature.properties[prop],mn,mx,!(prop.substring(4,7)==="Rai"))
+		};
+	};
+
+// Adding layers to the map
+
+// Make a climate data layer
+// this reads the climate data geojson (climate_data) and turns it into a leaflet layer object
+// style is used to set the style parameters 
+	let climatelayer = L.geoJSON(climate_data, {style: function(q){return style(q,getMin(climate_data.features,prop),getMax(climate_data.features,prop),prop)}});
+
+// add the climate layer to the map
+	mymap.addLayer(climatelayer);
+
+// create a leaflet legend object 	
+	var legend = L.control({position: 'bottomright'});
+
+// give the legend object an on.Add method
+// This updates the legend to give colored icons and names
+// There is probably a neater way of doing this.
+
+	legend.onAdd = function (map) {
+
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0], // We expect 11 values from 0 to 1. Order matters, this way the highest is on top.
+			labels = [],
+			from, to;
+// This for loop creates the legend labels in the form 0 - 2 etc.
+// At the moment .toFixed(1) returns values to 1 decimal place which is not always logical as sometimes there isn't 0.1 difference.
+// the label is of the form '<i style="background: color></i> lowervalue - upper value'. If there is no upper value '<i style="background: color></i> lowervalue+' is returned.
+
+		for (var i = 0; i <= grades.length-1; i++) {
+			from = grades[i];
+			to = grades[i - 1];
+
+			labels.push(
+				'<i style="background:' + getColor(from,0,1,!(varind==='Rain')) + '"></i> ' +
+				minmaxscale(from,getMin(climate_data.features,prop),getMax(climate_data.features,prop),inv=true).toFixed(1) + (minmaxscale(to,getMin(climate_data.features,prop),getMax(climate_data.features,prop),inv=true) ? '&ndash;' + minmaxscale(to,getMin(climate_data.features,prop),getMax(climate_data.features,prop),inv=true).toFixed(1) : '+'));
+		}
+
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+// add the legend to the map
+	legend.addTo(mymap);
+	
+// create a climate zone layer	
+// here the colors are set based on the cluster property where we already know the values.
+// zone 1 is blue, zone 2 is green and zone 3 is red.
+// This is arbitrary but was chosen as roughly wet, normal, dry.
+
+// Add AJAX request for cluster outline data
+// This adds data asynchronously which is an issue because it means the map loads before the data is read in
+
+        var zones = $.ajax({
+          url:"./3ClusterMap.geojson",
+          dataType: "json",
+          success: console.log("Zones Loaded"),
+          error: function (xhr) {
+            alert(xhr.statusText)
+          }
+        })
+// wrapping the first mapping in a when statement forces the map layer to wait for the data to be loaded before drawing the map
+// I think there is a leaflet ajax package that probably works around this.
+// also something like mapbox or google maps may have in-built features that take care of this.
+// or if you included the call to the data at the time of building the map (rather than creating a variable first) then it probably wouldn't be an issue.
+// another option may be to include this in a separate .js and run it at the start of the page. 
+
+$.when(zones).done(function(){
+	zonelayer = L.geoJSON(zones.responseJSON, {style: function(Feature){
+	switch (Feature.properties.clusters){
+	case 'Zone 1': return {color: "#0000ff"};
+	case 'Zone2': return {color: "#00ff00"};
+	case 'Zone3': return {color: "#ff0000"};
+	}
+	},
+	fillOpacity: 0, //This makes sure the zones are not filled in
+	weight: 4       //This makes the outlines easier to see.
+	});
+	// add climate zone layer to the map
+// This is done after adding climate data so that it appears on top.
+
+	mymap.addLayer(zonelayer);
+	});
+	
+
+
+</script>
+
+<!-- # This is javascript used to update the climate data -->
+
+<script>
+//  getVar
+//  ------
+// This function is used to update the map when the climate variable is changed
+// It updates the climate layer and associate legend.
+// It is intended to be used inside the onchange attribute of the select object climvar.
+// essentially it
+//     1. updates prop with the new variable
+//     2. removes the climate layer, legend object and climate zone layer (to keep zones on top)
+//     3. updates the climate layer with the new prop
+//     3. puts the layers back on the map.
+
+function getVar(set){
+// get the new chosen climate variable
+varind = set.value;
+// get the current period and update prop 
+prop = `${document.getElementById("climperiod").value}_${varind}`;
+// remove map layers (may not need ot remove zonelayer
+mymap.removeLayer(climatelayer);
+mymap.removeLayer(zonelayer);
+mymap.removeControl(legend);
+
+// updates climate data layer and associated text and figures.
+// this updates the mapped data
+climatelayer = L.geoJSON(climate_data, {style: function(q){return style(q,getMin(climate_data.features,prop),getMax(climate_data.features,prop),prop)}});
+
+// This updates the text that is written in current climate summary
+// The text is stored in a separate json 'database'
+// this works alright because climate data doesn't change so a text description of every combination is relatively simple to store.
+
+document.getElementById("mapsum").innerHTML = zonedetails.responseJSON[prop];
+
+// This redraws the plotly plot that is drawn below the summary text.
+// Note that we are actually creating three different objects with key-value pairs
+// The first key-value pair is the data to be plotted (y or can be x for horizontal
+// the object also has a name, type and marker style attributes key-value pair.
+// this isn't very robust and only works because I know what color to map to what zone.
+
+	Plotly.newPlot( TESTER, [{
+	y: climate_data.features.map(function(o){if (o.properties.clusters === 1) return o.properties[prop]}),
+	name: 'Zone 1',
+	type: 'box',
+	marker: {color: '#0000FF'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 2) return o.properties[prop]}),
+	name: 'Zone 2',
+	type: 'box',
+	marker: {color: '#00FF00'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 3) return o.properties[prop]}),
+	name: 'Zone 3',
+	type: 'box',
+	marker: {color: '#FF0000'}}],
+	{margin: { t: 0 },
+	responsive: true,
+	legend: {'orientation': 'h'}
+	}
+	);
+
+// put the layers back on
+mymap.addLayer(climatelayer);
+legend.addTo(mymap);
+mymap.addLayer(zonelayer);
+} 
+
+//  getPer
+//  ------
+// This function is used to update the map when the period is changed
+// It updates the climate layer and associate legend.
+// It is intended to be used inside the onchange attribute of the select object climperiod.
+// essentially it
+//     1. updates prop with the new variable
+//     2. removes the climate layer, legend object and climate zone layer (to keep zones on top)
+//     3. updates the climate layer with the new prop
+//     3. puts the layers back on the map.
+
+function getPer(set){
+// get the new period value
+propind = set.value;
+
+// get the current climate variable and update prop 
+prop = `${propind}_${document.getElementById("climvar").value}`
+
+// remove old layers
+mymap.removeLayer(climatelayer);
+mymap.removeLayer(zonelayer);
+mymap.removeControl(legend);
+
+// update climate layer object as with getVar
+climatelayer = L.geoJSON(climate_data, {style: function(q){return style(q,getMin(climate_data.features,prop),getMax(climate_data.features,prop),prop)}});
+document.getElementById("mapsum").innerHTML = zonedetails.responseJSON[prop];
+
+	Plotly.newPlot( TESTER, [{
+	y: climate_data.features.map(function(o){if (o.properties.clusters === 1) return o.properties[prop]}),
+	name: 'Zone 1',
+	type: 'box',
+	marker: {color: '#0000FF'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 2) return o.properties[prop]}),
+	name: 'Zone 2',
+	type: 'box',
+	marker: {color: '#00FF00'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 3) return o.properties[prop]}),
+	name: 'Zone 3',
+	type: 'box',
+	marker: {color: '#FF0000'}}],
+	{margin: { t: 0 },
+	legend: {'orientation': 'h'},
+	responsive: true
+	}
+	);
+
+// add new layers back
+mymap.addLayer(climatelayer);
+mymap.addLayer(zonelayer);
+legend.addTo(mymap);
+} 
+</script>
+
+<!-- # This is set of selections for the climate map  
+display: block puts them side-by-side
+id gives you something to call on and is used in collecting the selection that was made 
+currently thermTime does not work -->
+
+<div class="variable select" style="width: 100%; display: block;">
+    <select id="climperiod" onChange="getPer(this)" style="width: 49%; font-size: 1.2em">
+		<option selected value="Ann">Annual</option>
+		<option value="Sum">Summer</option>
+		<option value="Aut">Autumn</option>
+		<option value="Win">Winter</option>
+		<option value="Spr">Spring</option>
+	</select>
+	<select id="climvar" onChange="getVar(this)" style="width: 49%; font-size: 1.2em">
+    	<option selected value="Rain">Total Rainfall (mm)</option>
+    	<option value="Radn">Daily Radiation (Mw/m2)</option>
+    	<option value="T.Max">Daily Maximum Temperature (degrees C)</option>
+    	<option value="T.Min">Daily Minimum Temperature (degrees C)</option>
+    	<option value="ThermTime">Thermal Time (degree.days)</option>
+  </select>
+</div>
+
+<button class="accordion active">Current map summary</button>
+<div class="panel" id="mapsum" style= "max-height: 300px">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+
+<div class="figure" id="tester" style= "width: 95%; max-height: 600px"></div>
+ 
+<button class="accordion">Summary of Climate Zones</button>
+<div class="panel">
+  <p>
+	The Burdekin sugarcane growing region is divided into three 'Climate Zones':<br>
+	<ul> <span class="zone1">Zone 1</span>:<br> Zone 1 is located in the northern reaches of the Burdekin region. This zone tends to have the highest rainfall throughout the year as well as the highest minimum temperatures.</ul>
+	<ul> <span class="zone2">Zone 2</span>:<br> Zone 2 is located in the eastern and central reaches of the Burdekin region. This zone tends to vary the most spatially. Noteably this zone tends to have lower rainfall during spring than the typically drier Zone 3.</ul>
+	<ul> <span class="zone3">Zone 3</span>:<br> Zone 3 is largely the southern arm of the Burdekin region. This zone tends to have the highest maximum temperatures and lowest minimum temperatures throughout the year. Zone 3 also tends to be the driest area except during spring.</ul>
+  </p>
+</div>
+
+<button class="accordion">Details</button>
+<div class="panel">
+  <p>
+	  Climate Zones were based on Rainfall, Solar Radiation, and daily Maximum and Minimum temperature data. Daily data were collected on a 5km by 5km grid for the period 1975 - 2017. Total rainfall and average Radiation and Temperature data were calculated for each season (Summer - Spring) and annually. The median Rainfall, Radiation and Temperature data for Summer, Autumn, Winter and Spring were then used to group similar areas together.<br><br>
+	  Reading the Map:
+	  <ul>The map shows the median value of a given climate variable over the 1975 - 2017 period. Use the drop down options to select a season and climate variable to display.</ul>
+	  <ul>The zones are outlined in order to highlight the differences between regions. Note the the scale of the climate variables changes so that even small differences are obvious (for example see radiation which has a very narrow range of values).</ul>
+	  <ul>A summary of the differences between cluster is given in Current Map Summary based on the selected climate variable</ul>
+	  <br>
+	  Reading the Map summary:
+	  <ul>The Current Map Summary provides a brief discription of the differences between clusters for the selected climate variables as well as a boxplot to highlight this difference.</ul>
+	  <ul>The 'box' represents the 25th (bottom) to 75th (top) percetiles with the central line indicating the median. Generally if the boxes do not overlap we consider the differences between zones important.</ul>
+	  <ul>The 'whiskers' represent either the upper and lower 95% of data or the maximum and minimum values.</ul>
+	  <br>
+	  Reading the Climate Zone Summary:
+	  <ul>The Climate Zone Summary contains a brief overview of the key differences between the climate zones.</ul> 
+  </p>
+</div>
+
+
+<!-- this is script to get the cluster text data -->
+<script>
+// Add AJAX request for cluster details data
+// This adds data asynchronously which is an issue because it means the map loads before the data is read in
+
+        var zonedetails = $.ajax({
+          url:"./climatezonecaptions.json",
+          dataType: "json",
+          success: console.log("Zone captions Loaded"),
+          error: function (xhr) {
+            alert(xhr.statusText)
+          }
+        })
+	
+	$.when(zonedetails).done(function(){
+	console.log(zonedetails);
+	document.getElementById("mapsum").innerHTML = zonedetails.responseJSON[prop];
+})
+// This draws the first plotly object. It uses the preset variable values (annual rainfall).
+
+ TESTER = document.getElementById('tester');
+ 
+	Plotly.newPlot( TESTER, [{
+	y: climate_data.features.map(function(o){if (o.properties.clusters === 1) return o.properties[prop]}),
+	name: 'Zone 1',
+	type: 'box',
+	marker: {color: '#0000FF'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 2) return o.properties[prop]}),
+	name: 'Zone 2',
+	type: 'box',
+	marker: {color: '#00FF00'}},
+	{y: climate_data.features.map(function(o){if (o.properties.clusters === 3) return o.properties[prop]}),
+	name: 'Zone 3',
+	type: 'box',
+	marker: {color: '#FF0000'}}],
+	{margin: { t: 0 },
+	legend: {'orientation': 'h'},
+	responsive: true
+	}
+	);
+
+</script>
+
+
+<script>
+
+//this is script to control the actions of the accordian dropdown options
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {  // loop through the dropdown options 
+  acc[i].addEventListener("click", function() { //on-click do
+    this.classList.toggle("active"); // mark the button active, this changes the color and symbols based on the css
+    var panel = this.nextElementSibling; // this grabs the next element from the current dropdown option (the text)
+    if (panel.style.maxHeight){ // is originally set to zero in the css which evaluates as false so if the panel is open close it
+      panel.style.maxHeight = null; //'closes' the text
+	  panel.nextElementSibling.style.maxHeight = null;//'closes' the figure. Note that panel is now the text so .nextPanelElementSibling is the figure.
+    } else { //if the panel is closed open it.
+      panel.style.maxHeight = panel.scrollHeight + "px"; //opens the text
+	  panel.nextElementSibling.style.maxHeight = panel.nextElementSibling.scrollHeight + "px"; //opens the figure
+    } 
+  });
+}
+</script>
+
+</body>
+</html>

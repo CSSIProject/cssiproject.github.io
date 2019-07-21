@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="lib/nouislider.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <title>CSSIP Concept Designs</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <a class="navbar-brand" href="#" onclick="currentConditionsView.initialise()">CSSIP</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active" id="navitem-currentConditions" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="#" onclick="currentConditionsView.initialise()">Current conditions</a>
+          </li>
+          <li class="nav-item" id="navitem-forecasts" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="#forecasts" onclick="forecastsView.initialise()">Forecasts</a>
+          </li>
+          <li class="nav-item" id="navitem-myfarm" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="#myfarm" onclick="myfarmView.initialise()">My farm</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="mainmap" class="fakemap map-step-1">
+      <p>Fakemap</p>
+
+      <div class="conditions-marker">
+        <div>Ayr DPI Stn</div>
+        <div title="Current temperature"><img src="assets/temp.png" class="inline-icon"> 24.5 &deg;C</div>
+        <div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east"> 15 km/h</div>
+        <div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon"> 0 mm</div>
+        <div title="Full canopy crop water usage"><img src="assets/crop.png" class="inline-icon" title="Full canopy crop water usage"> 5 mm/day</div>
+      </div>
+
+
+    </div>
+    <div id="myfarmcontainer" class="footer-container footer-container-step-1">
+      <!-- <form>
+        <div class="form-group">
+          <label for="myfarm-date-range">Date: </label>
+          <input type="range" class="custom-range" id="myfarm-date-range" min="0" max="4" value="0" />
+        </div>
+      </form> -->
+      <div id="myfarm-date-label"></div>
+      <div id="myfarm-date-range" class="noui-date-slider"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="lib/nouislider.min.js"></script>
+    
+    <script>
+      // function stringToTimestamp(s) {
+      //   return new Date(parseInt(s.substring(0, 4)), parseInt(s.substring(4, 6))-1, parseInt(s.substring(6, 8))).getTime();
+      // }
+
+      // function formatTimestamp(t) {
+      //   return new Date(t).toDateString();
+      // }
+
+      var dateSlider = document.getElementById('myfarm-date-range');
+      var dates = ["20190710", "20190711", "20190712", "20190713", "20190714", "20190715", "20190716", "20190717", "20190718", "20190719", "20190720"]
+      var formattedDates = dates.map(function(d) {
+        return d.substring(6, 8) + "/" + d.substring(4, 6) + "/" + d.substring(0, 4);
+      });
+      var shortFormattedDates = dates.map(function(d) {
+        return d.substring(6, 8) + "/" + d.substring(4, 6);
+      });
+
+      noUiSlider.create(dateSlider, {
+        range: {
+            min: 0,
+            max: dates.length-1
+        },
+        step: 1,
+        start: 0,
+        pips: {
+          mode: 'steps',
+          filter: function(value, type) {
+            if (document.documentElement.clientWidth < 600) {
+              if (value == 0 || value == Math.round((dates.length-1)/2) || value == dates.length-1) {
+                return 1;
+              } else {
+                return -1;
+              }
+            } else {
+              if (value % 1 == 0) {
+                return 1;
+              } else {
+                return -1;
+              }
+            }
+          },
+          format: {
+            to: function(value) {
+              return shortFormattedDates[value];
+            }
+          }
+        },
+        format: {
+          to: function (value) {
+            return value;
+          },
+          from: function (value) {
+            return value;
+          }
+        }
+      });
+      dateSlider.noUiSlider.on('update', function(value, handle) {
+        document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value[0]];
+      });
+
+
+      
+
+    </script>
+
+  </body>
+</html>

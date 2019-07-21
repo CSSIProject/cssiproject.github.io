@@ -1,0 +1,198 @@
+/*! ## Styles for body which default throughout styles 
+I've used Arial and san-serif text for readability.
+Text is justified because that is how I'm used to seeing it.
+Font-size I read somewhere should be set to 100% in the body and then 
+modified as needed using the em scale (rather than in pixels).
+I've reduced the max-width to 90% of the view size. This gives a border that
+may not look great but improves navigation (scrolling) on mobile devices.
+Otherwise it is very difficult to scroll past the map.
+Margin auto balances it so the page is in the middle of the viewport.
+*/
+
+body{
+font-family: Arial, Helvetica, sans-serif  ;
+text-align: justify;
+font-size: 100%;
+max-width: 90%;
+margin: 0 auto;
+}
+
+/*! ## Styles for drop down segments */
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  vertical-align: text-bottom;
+  outline: none;
+  font-size: 1.2em;
+  transition: 0.4s;
+}
+
+.active, .accordion:hover {
+  background-color: #ccc;
+}
+
+.accordion:after {
+  content: '\23F5';
+  color: #777;
+  font-weight: bold;
+  float: left;
+  font-size: 1.2em;
+  margin-right: 20px;
+}
+
+.active:after{
+  content: "\23F7";
+}
+
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow-x: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+
+.figure {
+  padding: 0 18px;
+  width: 90%;
+  background-color: white;
+  max-height: 0px;
+  overflow: auto;
+  transition: max-height 0.2s ease-out;
+}
+*/
+
+/*! ##Styles for header box */ 
+.top-container {
+  background-color: rgb(54, 112, 56);
+  padding: 0px;
+  text-align: left;
+  font-display: bold;
+  color:  white;
+  display: block;
+  background-image: url(canebanner.jpg);
+}
+
+/*! ## Styles for tabs */
+.navbar {
+  width: 100%;
+  background-color: #555;
+  overflow: auto;
+}
+
+.navbar a {
+  float: left;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.navbar a:hover {
+  background-color: #000;
+}
+
+.navbar .active {
+  background-color: #4CAF50;
+  content: ;
+}
+
+/*! ### Note that I had to add this to remove a arrow added by the .active in drop down style */
+.navbar .active:after {
+content:'' ;
+}
+/*! # Used to style words in the colour of the zones*/
+.zone1{
+color: #0000ff
+}
+.zone2{
+color: #00ff00
+}
+.zone3{
+color: #ff0000
+}
+
+/*! ## Style for slider */
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.sliderticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.sliderticks p {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  
+  text-align: center;
+  width: 1px;
+  background: #D3D3D3;
+  height: 10px;
+  line-height: 40px;
+  margin: 0 0 40px 0;
+}
+
+
+/*!  ### This stacks the tabs ontop of eachother if the screen is too small. It also shrinks the figure to fit the smaller screen */
+@media screen and (max-width: 500px) {
+  .navbar a {
+    float: none;
+    display: block;
+  }
+/*!  .figure {
+  padding: 0 18px;
+  max-width: 500px;
+  background-color: white;
+  max-height: 0;
+  overflow: auto;
+  transition: max-height 0.2s ease-out;
+}
+
+*/
+}
+#map { width: 100%; height: 500px;}
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } 
+.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
