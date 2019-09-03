@@ -143,6 +143,17 @@ function finishLoading() {
 
     // Load weather station data
     map.addSource("stations", {"type": "geojson", "data": stations.data});
+    map.addLayer({
+        "id": "bom-stations",
+        "type": "symbol",
+        "source": "stations",
+        "layout": {
+            "visibility": "none",
+            "icon-image": 'bom-icon',
+            "icon-size": 0.5
+        },
+        "filter": ["==", "$type", "Point"],
+    });
 
     // Switch to the appropriate view
     if (window.location.hash == "") {
