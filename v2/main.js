@@ -274,15 +274,22 @@ const currentConditionsView = {
     },
 
     reenter() {
-        this.markers = stations.data.features.map(function(stn) {
+        // added a change to the properties to show the bom-stations layer
+        // the markers have been updated to use actual data but have been commented out at the moment
+        map.setLayoutProperty("bom-stations", "visibility", "visible");
+        /* this.markers = stations.data.features.map(function(stn) {
             var element = $.parseHTML( 
                 '<div class="conditions-marker">' +
-                '<div>Ayr DPI Stn</div>' +
-                '<div title="Current temperature"><img src="assets/temp.png" class="inline-icon"> 24.5 &deg;C</div>' +
-                '<div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east"> 15 km/h</div>' +
-                '<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon"> 0 mm</div>' +
-                '<div title="Full canopy crop water usage"><img src="assets/crop.png" class="inline-icon" title="Full canopy crop water usage"> 5 mm/day</div>' +
-                '</div>',
+        `<div title="site">${stn.properties.name}</div>` +
+        `<div title="${stn.properties.last_issued}">${stn.properties.last_issued.slice(10,22)}</div>` +
+        `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
+        ${stn.properties.apparent_t[stn.properties.apparent_t.length-1]}&deg;C</div>` +
+        `<div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east">
+        ${stn.properties.wind_spd_kmh[stn.properties.wind_spd_kmh.length-1]}km/h
+        ${stn.properties.wind_dir[stn.properties.wind_dir.length-1]}</div>` +
+        `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
+        ${stn.properties.rain_trace[stn.properties.rain_trace.length-1]} mm</div>` +
+        '</div>',
                 document);
             return new mapboxgl.Marker(
                 element[0],
@@ -292,10 +299,13 @@ const currentConditionsView = {
                 .setLngLat(stn.geometry.coordinates)
                 .addTo(map);
         });
+        */
         map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);  
     },
 
     exit() {
+        // turn the bom-stations layer of on exit
+        map.setLayoutProperty("bom-stations", "visibility", "none");
         this.markers.forEach(function(m) {
             m.remove();
         })
