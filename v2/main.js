@@ -49,7 +49,9 @@ fetchJSON("sets.geojson", function(data) {
     sets = {metadata: metadata, data: data};
     finishLoading();
 });
-fetchJSON("weather-stations.geojson", function(data) {
+// fetch BOM observations geojson from Azure blob storage
+// fetchJSON("weather-stations.geojson", function(data) {
+fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geojson", function(data) {
     var metadata = data.metadata;
     delete data.metadata;
     stations = {metadata: metadata, data: data};
