@@ -63,6 +63,38 @@ fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geo
     finishLoading();
 });
 
+// When a click occurs on a feature in the bom-stations layer, open a popup at the
+// location of the feature, with station name, last updated time and latest temp, rainfall and wind.
+
+map.on('click', 'bom-stations', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    console.log(`${e.features[0].properties.local_times[JSON.parse(e.features[0].properties.local_times).length-1]} on ${e.features[0].properties.apparent_t[JSON.parse(e.features[0].properties.apparent_t).length-1]}`);
+    var description =  
+        '<div class="popup-content">' +
+        `<div title="site">${e.features[0].properties.name}</div>` +
+        `<div title="${e.features[0].properties.last_issued}">${e.features[0].properties.last_issued.slice(10,22)}</div>` +
+        `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
+        ${JSON.parse(e.features[0].properties.apparent_t)[JSON.parse(e.features[0].properties.apparent_t).length-1]}&deg;C</div>` +
+        `<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
+        ${JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]} km/h
+        ${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}</div>` +
+        `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
+        ${JSON.parse(e.features[0].properties.rain_trace)[JSON.parse(e.features[0].properties.rain_trace).length-1]} mm</div>` +
+        '</div>';
+     
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+    new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+});
+
+
 function finishLoading() {
     if (!map_loaded || zones === undefined || sets == undefined || stations == undefined) {
         return;
