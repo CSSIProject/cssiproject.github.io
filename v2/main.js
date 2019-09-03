@@ -34,6 +34,11 @@ const map = new mapboxgl.Map({
     zoom: 10
 });
 map.on('load', function() {
+    // add bom-station ion to map
+    map.loadImage("assets/bom-station-icon.png", function(error,image){
+        if (error) throw error;
+        map.addImage('bom-icon', image)
+    });
     map_loaded = true;
     finishLoading();
 });
