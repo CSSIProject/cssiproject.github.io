@@ -19,6 +19,109 @@ function fetchJSON(url, callback) {
     xhr.send("");
 }
 
+// Generate wind direction / rotation
+
+function formatWindDirection(rotation="none",direction="N",speed="< 1"){
+    // returns a key-value pair of rotation, direction and speed, given either a rotation or a direction and speed
+    // rotation is evaluated first so if both a valid rotation and valid direction are supplied the result for the valid rotation will be returned
+    // rotation is assumed to be clockwise from north. therefore values >360 and <0 are invalid.
+    // direction must be one of N,NE,NNE, ENE etc.. and must be capitals
+    // if a rotation is supplied the given rotation is returned. IF a direction is supplied the rotation is given to within +/- 11.25 degrees.
+    // speed is used to change direction to "CALM" if speed is < 1 km/h and to force the rotation to be 0.
+    // in future speed may be used to change colors / icons etc.
+
+    let out = {"speed":speed,"rotation":null,"direction":null};
+    
+    if(typeof(rotation)==='number'){
+        out.rotation = rotation;
+        if(348.75 <= rotation && rotation <= 360 || rotation < 11.25){
+            out.direction = "S";
+        } else if(11.25 <= rotation && rotation < 33.75 ){
+            out.direction = "SSW";
+        } else if(33.75 <= rotation && rotation < 56.25 ){
+            out.direction = "SW";
+        } else if(56.25 <= rotation && rotation < 78.75 ){
+            out.direction = "WSW";
+        } else if(78.75 <= rotation && rotation < 101.25 ){
+            out.direction = "W";
+        } else if(101.25 <= rotation && rotation < 123.75 ){
+            out.direction = "WNW";
+        } else if(123.75<= rotation && rotation < 146.25 ){
+            out.direction = "NW";
+        } else if(146.25 <= rotation && rotation < 168.75 ){
+            out.direction = "NNW";
+        } else if(168.75 <= rotation && rotation < 191.25 ){
+            out.direction = "N";
+        } else if(191.25<= rotation && rotation < 213.75 ){
+            out.direction = "NNE";
+        } else if(213.75 <= rotation && rotation < 236.25 ){
+            out.direction = "NE";
+        } else if(236.25 <= rotation && rotation < 258.75 ){
+            out.direction = "ENE";
+        } else if(258.75 <= rotation && rotation < 281.25 ){
+            out.direction = "E";
+        } else if(281.25 <= rotation && rotation < 303.75 ){
+            out.direction = "ESE";
+        } else if(303.75 <= rotation && rotation < 326.25 ){
+            out.direction = "SE";
+        } else if(326.25 <= rotation && rotation < 348.75 ){
+            out.direction = "SSE";
+        } else {
+            console.log("please provide valid rotation");
+            return;
+            }
+    } else{
+        out.direction = direction;
+        switch (direction){
+            case "S": out.rotation = 0;
+            break;
+            case "SSW": out.rotation = 22.5;
+            break;
+            case "SW": out.rotation = 45;
+            break;
+            case "WSW": out.rotation = 67.5;
+            break;
+            case "W": out.rotation = 90;
+            break;
+            case "WNW": out.rotation = 112.5;
+            break;
+            case "NW": out.rotation = 135;
+            break;
+            case "NNW": out.rotation = 157.5;
+            break;
+            case "N": out.rotation = 180;
+            break;
+            case "NNE": out.rotation = 202.5;
+            break;
+            case "NE": out.rotation = 225;
+            break;
+            case "ENE": out.rotation = 247.5;
+            break;
+            case "E": out.rotation = 270;
+            break;
+            case "ESE": out.rotation = 292.5;
+            break;
+            case "SE": out.rotation = 315;
+            break;
+            case "SSE": out.rotation = 337.5;
+            break;
+            case "CALM": out.rotation = 0;
+            default: {console.log("please use a valid direction");
+            return ;
+            };
+        }
+    }
+    if(speed < 1 || direction==="CALM"){
+        out.speed= "< 1";
+        out.direction="CALM";
+        out.rotation=0;
+    } else{
+        out.speed = speed;
+    }
+    return out;
+}
+
+
 
 ///////////////////////////////////////////////////////
 // Load the map
@@ -68,16 +171,19 @@ fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geo
 
 map.on('click', 'bom-stations', function (e) {
     var coordinates = e.features[0].geometry.coordinates.slice();
-    console.log(`${e.features[0].properties.local_times[JSON.parse(e.features[0].properties.local_times).length-1]} on ${e.features[0].properties.apparent_t[JSON.parse(e.features[0].properties.apparent_t).length-1]}`);
+    var dir = formatWindDirection(null,JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1],JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]);
+    var windicon;
+    if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
     var description =  
         '<div class="popup-content">' +
         `<div title="site">${e.features[0].properties.name}</div>` +
         `<div title="${e.features[0].properties.last_issued}">${e.features[0].properties.last_issued.slice(10,22)}</div>` +
         `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
         ${JSON.parse(e.features[0].properties.apparent_t)[JSON.parse(e.features[0].properties.apparent_t).length-1]}&deg;C</div>` +
-        `<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
-        ${JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]} km/h
-        ${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}</div>` +
+        //`<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
+        `<div title="Wind direction and speed"><img src=${windicon} class="inline-icon" style="transform:rotate(${dir.rotation.toFixed()}deg);" title="Wind from the east">
+        ${dir.speed} km/h
+        ${dir.direction}</div>` +
         `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
         ${JSON.parse(e.features[0].properties.rain_trace)[JSON.parse(e.features[0].properties.rain_trace).length-1]} mm</div>` +
         '</div>';
@@ -278,15 +384,19 @@ const currentConditionsView = {
         // the markers have been updated to use actual data but have been commented out at the moment
         map.setLayoutProperty("bom-stations", "visibility", "visible");
         /* this.markers = stations.data.features.map(function(stn) {
+            var dir = formatWindDirection(null,JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1],JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]);
+            var windicon;
+            if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
             var element = $.parseHTML( 
                 '<div class="conditions-marker">' +
         `<div title="site">${stn.properties.name}</div>` +
         `<div title="${stn.properties.last_issued}">${stn.properties.last_issued.slice(10,22)}</div>` +
         `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
         ${stn.properties.apparent_t[stn.properties.apparent_t.length-1]}&deg;C</div>` +
-        `<div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east">
-        ${stn.properties.wind_spd_kmh[stn.properties.wind_spd_kmh.length-1]}km/h
-        ${stn.properties.wind_dir[stn.properties.wind_dir.length-1]}</div>` +
+        //`<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
+        `<div title="Wind direction and speed"><img src=${windicon} class="inline-icon" style="transform:rotate(${dir.rotation.toFixed()}deg);" title="Wind from the east">
+        ${dir.speed} km/h
+        ${dir.direction}</div>` +
         `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
         ${stn.properties.rain_trace[stn.properties.rain_trace.length-1]} mm</div>` +
         '</div>',
