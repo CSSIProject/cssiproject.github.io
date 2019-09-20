@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://stevenlevithan.com/assets/misc/date.format.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
+    <link rel="stylesheet" href="css/cssipfont.css">
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet'>
     <link href="lib/nouislider.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -27,9 +30,27 @@
             <a class="nav-link" href="#forecasts" onclick="forecastsView.switchTo()">Forecasts</a>
           </li>
           <li class="nav-item" id="navitem-myfarm" data-toggle="collapse" data-target=".navbar-collapse.show">
-            <a class="nav-link" href="#myfarm" onclick="myfarmView.switchTo()">My farm</a>
+            <a class="nav-link" href="#myfarm" data-toggle="modal" data-target="#signupModal" onclick="myfarmView.switchTo()">My farm</a>
           </li>
         </ul>
+        <ul class="navbar-nav navbar-right">
+            <li class="nav-item dropdown">
+                <a class ="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><i class="icon-info" ></i>Info</a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">About</a>
+                  <a class="dropdown-item" href="#">Contact Us</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Definitions</a>
+                  <a class="dropdown-item" href="#">Observations</a>
+                  <a class="dropdown-item" href="#">Forecasts</a>
+                  <a class="dropdown-item" href="#">Irrigweb</a>
+                  <a class="dropdown-item" href="#">Climate Zones</a>
+                </ul>
+            </li>
+            <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+              <a class="nav-link" data-toggle="modal" data-target="#signupModal" href="#"><i class="icon-login" ></i> Login</a>
+            </li>
+         </ul>
       </div>
     </nav>
 
@@ -48,6 +69,37 @@
             <div class="noui-date-slider-padding"></div>
             <div class="footer-heading">This block's soil water deficit</div>
             <div id="myfarm-plot"></div>
+        </div>
+      </div>
+    </div>
+    <!-- General CSSIP login -->
+    <div class="modal fade" id="signupModal" role="dialog" aria-labelledby="signupModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class= "modal-content">
+        <div class= "modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+        </div> 
+        <div class="modal-body">
+            <form action="/action_page.php">
+              <div class="form-group">
+                  <label for="exampleInputEmail1">Email address</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                  <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              </div>
+              <div class="form-group">
+                  <label for="exampleInputPassword1">Password</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+              </div>
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="modal-footer">
         </div>
       </div>
     </div>
