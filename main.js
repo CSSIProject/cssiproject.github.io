@@ -19,7 +19,16 @@ function fetchJSON(url, callback) {
     xhr.send("");
 }
 
-// Generate wind direction / rotation
+//// Colour functions !!!
+
+// continuous color for farm outputs
+
+
+//const farmColorCont = function (value,outName,breakpoints,breakColors){
+
+//}
+
+// generate wind direction
 
 function formatWindDirection(rotation="none",direction="N",speed="< 1"){
     // returns a key-value pair of rotation, direction and speed, given either a rotation or a direction and speed
@@ -121,8 +130,6 @@ function formatWindDirection(rotation="none",direction="N",speed="< 1"){
     return out;
 }
 
-
-
 ///////////////////////////////////////////////////////
 // Load the map
 var map_loaded = false;
@@ -137,7 +144,6 @@ const map = new mapboxgl.Map({
     zoom: 10
 });
 map.on('load', function() {
-    // add bom-station ion to map
     map.loadImage("assets/bom-station-icon.png", function(error,image){
         if (error) throw error;
         map.addImage('bom-icon', image)
@@ -151,26 +157,19 @@ fetchJSON("zones.geojson", function(data) {
     zones = {metadata: metadata, data: data};
     finishLoading();
 });
-fetchJSON("sets.geojson", function(data) {
+fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/aalinton@bigpond.com/Latest.geojson", function(data) {
     var metadata = data.metadata;
     delete data.metadata;
     sets = {metadata: metadata, data: data};
     finishLoading();
 });
-// fetch BOM observations geojson from Azure blob storage
-// fetchJSON("weather-stations.geojson", function(data) {
-fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geojson", function(data) {
-    var metadata = data.metadata;
-    delete data.metadata;
-    stations = {metadata: metadata, data: data};
-    finishLoading();
-});
 
 // When a click occurs on a feature in the bom-stations layer, open a popup at the
-// location of the feature, with station name, last updated time and latest temp, rainfall and wind.
+// location of the feature, with ....
 
 map.on('click', 'bom-stations', function (e) {
     var coordinates = e.features[0].geometry.coordinates.slice();
+    console.log(`${e.features[0].properties.local_times[JSON.parse(e.features[0].properties.local_times).length-1]} on ${e.features[0].properties.apparent_t[JSON.parse(e.features[0].properties.apparent_t).length-1]}`);
     var dir = formatWindDirection(null,JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1],JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]);
     var windicon;
     if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
@@ -200,6 +199,14 @@ map.on('click', 'bom-stations', function (e) {
     .addTo(map);
 });
 
+// fetch BOM observations geojson from Azure blob storage
+// fetchJSON("weather-stations.geojson", function(data) {
+    fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geojson", function(data) {
+        var metadata = data.metadata;
+        delete data.metadata;
+        stations = {metadata: metadata, data: data};
+        finishLoading();
+    });
 
 function finishLoading() {
     if (!map_loaded || zones === undefined || sets == undefined || stations == undefined) {
@@ -231,27 +238,34 @@ function finishLoading() {
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
-    var startDate = sets.metadata.dates[0]; // todo use today's date instead
+    //var startDate = sets.metadata.dates[0]; // todo use today's date instead
+    let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+    let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+    let startData = "SoilDef";
+    let displayIndex = null;
+    let displayData = null; 
+
     map.addLayer({
         "id": "set-fills",
         "type": "fill",
         "source": "sets",
-        "filter": ["has", "set"],
+        "filter": ["==", "plot","yes"],
         "layout": {
             "visibility": "none"
         },
         "paint": {
-            "fill-color": [
-                "let", "swd_date", ["concat", "swd_", ["string", ["feature-state", "displayDate"], startDate]],
-
+            "fill-color":
                 ["interpolate",
-                    ["linear"],
-                    ["number", ["get", ["var", "swd_date"]], -1000],
-                    -1000, "rgb(220, 220, 220)",
-                    -30, "rgb(220, 0, 0)",
-                    0, "rgb(0, 220, 0)"
-                ]
-            ],
+                   ["linear"],
+                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                -100,"#d53e4f",
+                -80,"#fc8d59",
+                -60,"#fee08b",
+                -40,"#ffffbf",
+                -20,"#e6f598",
+                -0,"#99d594",
+                20,"#3288bd",
+               ],
             "fill-opacity": [
                 "case",
                 ["any", ["boolean", ["feature-state", "hover"], false], ["boolean", ["feature-state", "active"], false]],
@@ -264,7 +278,7 @@ function finishLoading() {
         "id": "set-borders",
         "type": "line",
         "source": "sets",
-        "filter": ["has", "set"],
+        "filter": ["==", "plot","yes"],
         "layout": {
             "visibility": "none"
         },
@@ -302,7 +316,6 @@ function finishLoading() {
         myfarmView.switchTo();
     }
 
-    // 
 }
 
 
@@ -380,23 +393,17 @@ const currentConditionsView = {
     },
 
     reenter() {
-        // added a change to the properties to show the bom-stations layer
-        // the markers have been updated to use actual data but have been commented out at the moment
         map.setLayoutProperty("bom-stations", "visibility", "visible");
         /* this.markers = stations.data.features.map(function(stn) {
-            var dir = formatWindDirection(null,JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1],JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]);
-            var windicon;
-            if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
             var element = $.parseHTML( 
                 '<div class="conditions-marker">' +
         `<div title="site">${stn.properties.name}</div>` +
         `<div title="${stn.properties.last_issued}">${stn.properties.last_issued.slice(10,22)}</div>` +
         `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
         ${stn.properties.apparent_t[stn.properties.apparent_t.length-1]}&deg;C</div>` +
-        //`<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
-        `<div title="Wind direction and speed"><img src=${windicon} class="inline-icon" style="transform:rotate(${dir.rotation.toFixed()}deg);" title="Wind from the east">
-        ${dir.speed} km/h
-        ${dir.direction}</div>` +
+        `<div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east">
+        ${stn.properties.wind_spd_kmh[stn.properties.wind_spd_kmh.length-1]}km/h
+        ${stn.properties.wind_dir[stn.properties.wind_dir.length-1]}</div>` +
         `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
         ${stn.properties.rain_trace[stn.properties.rain_trace.length-1]} mm</div>` +
         '</div>',
@@ -414,7 +421,6 @@ const currentConditionsView = {
     },
 
     exit() {
-        // turn the bom-stations layer of on exit
         map.setLayoutProperty("bom-stations", "visibility", "none");
         this.markers.forEach(function(m) {
             m.remove();
@@ -450,6 +456,7 @@ const forecastsView = {
 
 
 
+
 ///////////////////////////////////////////////////////
 // My Farm
 
@@ -462,24 +469,33 @@ const myfarmView = {
         // Set up date slider
         var dateSlider = document.getElementById('myfarm-date-range');
         var formattedDates = sets.metadata.dates.map(function(d) {
-            return d.substring(6, 8) + "/" + d.substring(4, 6) + "/" + d.substring(0, 4);
+            return dateFormat(d,"ddd dd mmm"); // use dateFormat to get date as (e.g. Tue 17 April)
+            //return d.substring(6, 8) + "/" + d.substring(4, 6) + "/" + d.substring(0, 4);
         });
         var shortFormattedDates = sets.metadata.dates.map(function(d) {
-            return d.substring(6, 8) + "/" + d.substring(4, 6);
+            return dateFormat(d,"ddd dd"); // use dateFormat to get date as (e.g. Tue 17)
+            //return d.substring(6, 8) + "/" + d.substring(4, 6);
         });
         var maxIndex = sets.metadata.dates.length-1;
+        let startData = "SoilDef";
+        let displayData = null;
+        let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+        let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+        console.log(`maxIndex: ${maxIndex}`)    
         noUiSlider.create(dateSlider, {
             range: {
-                min: 0,
-                max: maxIndex
+                'min': 0,
+                'max': maxIndex
             },
             step: 1,
-            start: Math.round(maxIndex/2),
+            //start: Math.round(maxIndex/2), 
+            start: startIndex, //currently earliest date is current date this should really look for the current date.
+            direction: 'ltr',
             pips: {
             mode: 'steps',
             filter: function(value, type) {
                 if (document.documentElement.clientWidth < 576) {
-                if (value == 0 || value == Math.round(maxIndex/2) || value == maxIndex) {
+                if (value == 0 || value == maxIndex) {
                     return 1;
                 } else {
                     return -1;
@@ -500,19 +516,32 @@ const myfarmView = {
             },
             format: {
             to: function (value) {
-                return value;
+                return Number(value).toFixed(0);
             },
             from: function (value) {
-                return value;
+                return Number(value).toFixed(0);
             }
             }
         });
         dateSlider.noUiSlider.on('update', function(value, handle) {
-            document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value[0]];
-            var blockIDs = sets.data.features.map(function (f) { return f.id });
-            blockIDs.forEach(function(blockid) {
-                map.setFeatureState({source: 'sets', id: blockid}, { displayDate: sets.metadata.dates[value[0]] });
-            });
+            document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value];
+            displayIndex = sets.metadata.dates.indexOf(sets.metadata.dates[value]);
+            map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    -100,"#d53e4f",
+                    -80,"#fc8d59",
+                    -60,"#fee08b",
+                    -40,"#ffffbf",
+                    -20,"#e6f598",
+                    -0,"#99d594",
+                    20,"#3288bd",
+                ])
+
+            //var blockIDs = sets.data.features.map(function (f) { return f.id });
+            //blockIDs.forEach(function(blockid) {
+            //    map.setFeatureState({source: 'sets', id: blockid}, { displayIndex: sets.metadata.dates.indexOf(sets.metadata.dates[value[0]])});
+            //});
         });
 
         // Set up hover effect on the sets 
@@ -567,14 +596,11 @@ const myfarmView = {
                 map.resize();
 
                 // Draw the plot
-                var plotX = sets.metadata.dates.map(function(d) {
-                    return d.substring(0, 4) + "-" + d.substring(4, 6) + "-" + d.substring(6, 8);
-                });
                 var matchingFeatures = sets.data.features.filter(function (f) { return f.id == myfarmView.currentBlock });
                 if (matchingFeatures.length == 1) {
-                    var plotY = sets.metadata.dates.map(function(d) {
-                        return matchingFeatures[0].properties["swd_" + d];
-                    });
+                    var plotY = matchingFeatures[0].properties["SoilDef"];
+                    var plotX = matchingFeatures[0].properties["GraphDate"];
+            
                     Plotly.newPlot("myfarm-plot", 
                         [{x: plotX, y: plotY, type: 'scatter'}],
                         {
@@ -615,7 +641,14 @@ const myfarmView = {
 
     reenter() {
         // Already on this view. Reset the map view.
-        map.stop().fitBounds([[147.2010, -19.7342], [147.2218, -19.7539]]);
+        bounds = new mapboxgl.LngLatBounds();
+        for(feature of sets.data.features){
+            var coords = feature.geometry.coordinates;
+            for(coord of coords){
+                bounds.extend(coord);
+            }
+        };            
+        map.stop().fitBounds(bounds,{padding:100});
     },
 
     exit() {
