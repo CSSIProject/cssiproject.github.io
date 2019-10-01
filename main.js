@@ -474,6 +474,27 @@ const myfarmView = {
     currentBlock: null,
     
     construct() {
+        // Set up legend overlay
+        // a list of colours and values
+        var cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+        var labs = ['-100','-80','-60',"-40","-20","0","20"];
+        // add in a div for each colour / label combo
+        
+        for (i = 0; i < labs.length; i++) {
+            var lab = labs[i];
+            var col = cols[i];
+            var item = document.createElement('div');
+            var key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = col;
+      
+            var value = document.createElement('span');
+            value.innerHTML = lab;
+            item.appendChild(key);
+            item.appendChild(value);
+            legend.appendChild(item);
+        };
+        
         // Set up date slider
         var dateSlider = document.getElementById('myfarm-date-range');
         var formattedDates = sets.metadata.dates.map(function(d) {
