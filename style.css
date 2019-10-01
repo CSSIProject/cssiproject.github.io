@@ -56,6 +56,11 @@ nav {
   height: 6.5rem;
   opacity: 1;
 }
+.footer-container-step-0 {
+  height: 0rem;
+  opacity: 1;
+  display: none;
+}
 .footer-heading {
   margin: auto;
   text-align: center;
