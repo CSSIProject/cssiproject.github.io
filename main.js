@@ -389,6 +389,8 @@ const currentConditionsView = {
     markers: [],
 
     enter() {
+        $("#myfarmcontainer").addClass("footer-container-step-0");
+        $("#legend").addClass("map-overlay-step-0");
         this.reenter();
     },
 
@@ -422,6 +424,8 @@ const currentConditionsView = {
 
     exit() {
         map.setLayoutProperty("bom-stations", "visibility", "none");
+        $("#myfarmcontainer").removeClass("footer-container-step-0");
+        $("#legend").removeClass("map-overlay-step-0");
         this.markers.forEach(function(m) {
             m.remove();
         })
@@ -441,6 +445,8 @@ const forecastsView = {
 
     enter() {
         map.setLayoutProperty("zone-fills", "visibility", "visible");
+        $("#myfarmcontainer").addClass("footer-container-step-0");
+        $("#legend").addClass("map-overlay-step-0");
         this.reenter();
     },
 
@@ -451,6 +457,8 @@ const forecastsView = {
 
     exit() {
         map.setLayoutProperty("zone-fills", "visibility", "none");
+        $("#myfarmcontainer").removeClass("footer-container-step-0");
+        $("#legend").removeClass("map-overlay-step-0");
     }
 }
 
@@ -629,6 +637,7 @@ const myfarmView = {
 
     enter() {
         $("#myfarmcontainer").addClass("footer-container-step-1");
+        $("#legend").addClass("map-overlay-step-1");
         $("#mainmap").addClass("map-step-1");
         map.resize();
 
@@ -656,6 +665,7 @@ const myfarmView = {
         map.setLayoutProperty("set-borders", "visibility", "none");
         $("#myfarmcontainer").removeClass("footer-container-step-1").removeClass("footer-container-step-2");
         $("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
+        $("#legend").removeClass("map-overlay-step-1");
         map.resize();
 
     }
