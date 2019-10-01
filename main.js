@@ -243,8 +243,8 @@ function finishLoading() {
     let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
     let startData = "SoilDef";
     let displayIndex = null;
-    let displayData = null;
-    
+    let displayData = null; 
+
     map.addLayer({
         "id": "set-fills",
         "type": "fill",
@@ -390,8 +390,6 @@ const currentConditionsView = {
 
     enter() {
         this.reenter();
-        $("#myfarmcontainer").addClass("footer-container-step-0");
-        $("#legend").addClass("map-overlay-step-0");
     },
 
     reenter() {
@@ -419,14 +417,11 @@ const currentConditionsView = {
                 .addTo(map);
         });
         */
-        map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);
-        $("ma")  
+        map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);  
     },
 
     exit() {
         map.setLayoutProperty("bom-stations", "visibility", "none");
-        $("#myfarmcontainer").removeClass("footer-container-step-0");
-        $("#legend").removeClass("map-overlay-step-0");
         this.markers.forEach(function(m) {
             m.remove();
         })
@@ -446,8 +441,6 @@ const forecastsView = {
 
     enter() {
         map.setLayoutProperty("zone-fills", "visibility", "visible");
-        $("#myfarmcontainer").addClass("footer-container-step-0");
-        $("#legend").addClass("map-overlay-step-0");
         this.reenter();
     },
 
@@ -458,8 +451,6 @@ const forecastsView = {
 
     exit() {
         map.setLayoutProperty("zone-fills", "visibility", "none");
-        $("#myfarmcontainer").removeClass("footer-container-step-0");
-        $("#legend").removeClass("map-overlay-step-0");
     }
 }
 
@@ -475,23 +466,6 @@ const myfarmView = {
     currentBlock: null,
     
     construct() {
-        var cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-        var labs = ['-100','-80','-60',"-40","-20","0","20"];
-    
-        for (i = 0; i < labs.length; i++) {
-            var lab = labs[i];
-            var col = cols[i];
-            var item = document.createElement('div');
-            var key = document.createElement('span');
-            key.className = 'legend-key';
-            key.style.backgroundColor = col;
-      
-            var value = document.createElement('span');
-            value.innerHTML = lab;
-            item.appendChild(key);
-            item.appendChild(value);
-            legend.appendChild(item);
-        }; 
         // Set up date slider
         var dateSlider = document.getElementById('myfarm-date-range');
         var formattedDates = sets.metadata.dates.map(function(d) {
@@ -655,7 +629,6 @@ const myfarmView = {
 
     enter() {
         $("#myfarmcontainer").addClass("footer-container-step-1");
-        $("#legend").addClass("map-overlay-step-1");
         $("#mainmap").addClass("map-step-1");
         map.resize();
 
@@ -682,7 +655,6 @@ const myfarmView = {
         map.setLayoutProperty("set-fills", "visibility", "none");
         map.setLayoutProperty("set-borders", "visibility", "none");
         $("#myfarmcontainer").removeClass("footer-container-step-1").removeClass("footer-container-step-2");
-        $("#legend").addClass("map-overlay-step-1");
         $("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
         map.resize();
 
