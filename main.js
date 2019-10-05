@@ -636,28 +636,28 @@ const myfarmView = {
                           y: matchingFeatures[0].properties["SoilDef_hist"],
                           type: 'scatter',
                           name: 'current',
-                          axis: 'y',
+                          yaxis: 'y',
                           marker: {color: '#000000'}
                          },
                          {x: plotX,
                           y: matchingFeatures[0].properties["SoilDef_zero"],
                           type: 'scatter',
                           name: 'ZeroRainfall',
-                          axis: 'y',
+                          yaxis: 'y',
                           marker: {color: '#0000FF'}
                          },
                         {x: plotX,
                          y: matchingFeatures[0].properties["NetApp_hist"],
                          type: 'bar',
                          name: 'irrig_applied',
-                         axis: 'y2',
+                         yaxis: 'y2',
                         marker: {color: '#000000'}
                          },
                          {x: plotX,
                           y: matchingFeatures[0].properties["NetApp_zero"],
                           type: 'bar',
                           name: 'irrig_schedule',
-                          axis: 'y2',
+                          yaxis: 'y2',
                          marker: {color: '#0000FF'}
                          }],
                         {
