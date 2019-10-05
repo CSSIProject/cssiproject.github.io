@@ -1,6 +1,13 @@
 ///////////////////////////////////////////////////////
 // Generic code
 
+// set some global variables for mapping
+
+var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+var displayIndex; 
+var startData = "SoilDef";
+var displayData = "SoilDef_zero";
+
 // Fetch JSON 
 function fetchJSON(url, callback) {
     var xhr = new XMLHttpRequest();
@@ -231,12 +238,7 @@ fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/aalinton@bigpon
     finishLoading();
 });
 
-// set some global variables for mapping
 
-var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-var startData = "SoilDef";
-var displayData = "SoilDef_zero";
 
 // When a click occurs on a feature in the bom-stations layer, open a popup at the
 // location of the feature, with ....
@@ -312,6 +314,9 @@ function finishLoading() {
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
+    displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+    startData = "SoilDef";
+    displayData = "SoilDef_zero";
     map.addLayer({
         "id": "set-fills",
         "type": "fill",
