@@ -281,14 +281,28 @@ var popup = new mapboxgl.Popup();
 map.on('mouseenter', 'set-fills', function (e) {
     var swdvalue;
     var etvalue;
+    var lastigtext;
+    var nextigtext;
     if(displayIndex > 7){
         swdvalue = JSON.parse(e.features[0].properties.SoilDef_hist)[displayIndex].toFixed(2);
         etvalue = JSON.parse(e.features[0].properties.ET_hist)[displayIndex].toFixed(2);
+    }else{
+        swdvalue = JSON.parse(e.features[0].properties.SoilDef_zero)[displayIndex].toFixed(2);
+        etvalue = JSON.parse(e.features[0].properties.ET_zero)[displayIndex].toFixed(2);
     };
-        var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
+    var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
     var nextigindex = JSON.parse(e.features[0].properties.NetApp_zero).findIndex((x) => x > 0);
-    var lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
-    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
+    if(lastigindex < 0){
+        lastigtext = "no irrigation last week";   
+    }else{
+        lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
+    };
+    if(nextigindex < 0){
+        nextigtext = "no irrigation scheduled";
+    }else{
+        nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
+    };
+    
     var description =  
         '<div class="popup-content">' +
         `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
