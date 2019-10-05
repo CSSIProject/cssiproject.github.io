@@ -19,14 +19,79 @@ function fetchJSON(url, callback) {
     xhr.send("");
 }
 
-//// Colour functions !!!
+// Change map variable
 
-// continuous color for farm outputs
+function getVar(set,displayIndex=displayIndex){
+    startData = set.Value;
+
+    if(displayIndex < 7){displayData = set.value + "_hist"}else{displayData = set.value +"_zero"};
+    
+    if(set.value === "SoilDef"){
+       //update the map
+       map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                    -100,"#d53e4f",
+                    -80,"#fc8d59",
+                    -60,"#fee08b",
+                    -40,"#ffffbf",
+                    -20,"#e6f598",
+                    -0,"#99d594",
+                    20,"#3288bd",
+                ]);
+        //update the legend colour list
+        cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+        labs = ['-100','-80','-60',"-40","-20","0","20"];
+        } else if (set.value === "ET"){
+            map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    0,"#d53e4f",
+                    2,"#fc8d59",
+                    4,"#fee08b",
+                    6,"#ffffbf",
+                    8,"#e6f598",
+                    10,"#99d594",
+                    12,"#3288bd",
+                ]);
+                //update the legend colour list
+                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+                labs = ['-100','-80','-60',"-40","-20","0","20"];
+        } else if (set.value === "NetApp"){
+                    map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    0,"#d53e4f",
+                    20,"#fc8d59",
+                    40,"#fee08b",
+                    60,"#ffffbf",
+                    80,"#e6f598",
+                    100,"#99d594",
+                    120,"#3288bd",
+                ]);
+                //update the legend colour list
+                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+                labs = ['0','20','40',"60","80","100","120"];
+        };
+
+    for (i = 0; i < labs.length; i++) {
+            var lab = labs[i];
+            var col = cols[i];
+            var item = document.createElement('div');
+            var key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = col;
+      
+            var value = document.createElement('span');
+            value.innerHTML = lab;
+            item.appendChild(key);
+            item.appendChild(value);
+            legend.removeChild(legend.childNodes[3]);
+            legend.appendChild(item);
+    
+}; 
 
 
-//const farmColorCont = function (value,outName,breakpoints,breakColors){
-
-//}
 
 // generate wind direction
 
@@ -239,11 +304,10 @@ function finishLoading() {
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
     //var startDate = sets.metadata.dates[0]; // todo use today's date instead
-    let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-    let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-    let startData = "SoilDef_zero";
-    let displayIndex = null;
-    let displayData = null; 
+    var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+    var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+    var startData = "SoilDef";
+    var displayData = "SoilDef_zero"; 
 
     map.addLayer({
         "id": "set-fills",
@@ -257,7 +321,7 @@ function finishLoading() {
             "fill-color":
                 ["interpolate",
                    ["linear"],
-                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                 -100,"#d53e4f",
                 -80,"#fc8d59",
                 -60,"#fee08b",
@@ -506,10 +570,10 @@ const myfarmView = {
             //return d.substring(6, 8) + "/" + d.substring(4, 6);
         });
         var maxIndex = sets.metadata.dates.length-1;
-        let startData = "SoilDef_zero";
-        let displayData = null;
-        let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-        let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+        var startData = "SoilDef";
+        var displayData = "SoilDef_zero";
+        var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+        var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
   
         noUiSlider.create(dateSlider, {
             range: {
@@ -518,7 +582,7 @@ const myfarmView = {
             },
             step: 1,
             //start: Math.round(maxIndex/2), 
-            start: startIndex, //currently earliest date is current date this should really look for the current date.
+            start: displayIndex, 
             direction: 'ltr',
             pips: {
             mode: 'steps',
@@ -556,10 +620,12 @@ const myfarmView = {
             document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value];
             displayIndex = sets.metadata.dates.indexOf(sets.metadata.dates[value]);
             // need to change the variable being plotted based on date being shown
-            if(displayIndex < 7){displayData = startData.split("_")[0]+"_hist"}else{displayData = startData.split("_")[0]+"_zero"};
-            map.setPaintProperty('set-fills','fill-color',["interpolate",
+            if(displayIndex < 7){displayData = startData+"_hist"}else{displayData = startData+"_zero"};
+            if(startData === "SoilDef"){
+       //update the map
+       map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
-                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     -100,"#d53e4f",
                     -80,"#fc8d59",
                     -60,"#fee08b",
@@ -567,7 +633,41 @@ const myfarmView = {
                     -20,"#e6f598",
                     -0,"#99d594",
                     20,"#3288bd",
-                ])
+                ]);
+        //update the legend colour list
+        cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+        labs = ['-100','-80','-60',"-40","-20","0","20"];
+        } else if (startData === "ET"){
+            map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                    0,"#d53e4f",
+                    2,"#fc8d59",
+                    4,"#fee08b",
+                    6,"#ffffbf",
+                    8,"#e6f598",
+                    10,"#99d594",
+                    12,"#3288bd",
+                ]);
+                //update the legend colour list
+                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+                labs = ['-100','-80','-60',"-40","-20","0","20"];
+        } else if (startData === "NetApp"){
+                    map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                    0,"#d53e4f",
+                    20,"#fc8d59",
+                    40,"#fee08b",
+                    60,"#ffffbf",
+                    80,"#e6f598",
+                    100,"#99d594",
+                    120,"#3288bd",
+                ]);
+                //update the legend colour list
+                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+                labs = ['0','20','40',"60","80","100","120"];
+        };
 
             //var blockIDs = sets.data.features.map(function (f) { return f.id });
             //blockIDs.forEach(function(blockid) {
