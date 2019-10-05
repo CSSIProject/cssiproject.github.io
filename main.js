@@ -275,6 +275,35 @@ map.on('click', 'bom-stations', function (e) {
     .addTo(map);
 });
 
+// When a click occurs on a feature in the myfarm layer, open a popup at the
+// location of the feature, with ....
+
+map.on('click', 'set-fills', function (e) {
+    
+    var description =  
+        '<div class="popup-content">' +
+        `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
+        `<div title="FieldName">Field: ${e.features[0].properties.FieldName}</div>` +
+        `<div title="BlockId">id: ${e.features[0].properties.id}</div>` +
+        `<div title="SoilDef">SWD: ${if(displayIndex < 7){return e.features[0].properties.SoilDef_hist[displayIndex]}else{return e.features[0].properties.SoilDef_zero[displayIndex]}} (mm)</div>` +
+        `<div title="ET">SWD: ${if(displayIndex < 7){return e.features[0].properties.ET_hist[displayIndex]}else{return e.features[0].properties.ET_zero[displayIndex]}} (mm)</div>` +
+        `<div title="LastIrr">Last Irr: ${if(displayIndex < 7){return e.features[0].properties.NetApp_hist[displayIndex]}else{return e.features[0].properties.NetApp_zero[displayIndex]}} (mm)</div>` +
+        `<div title="NextIrr">Next Irr: ${e.features[0].properties.next_irr}</div>`;
+     
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+    new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+});
+
+
+
 // fetch BOM observations geojson from Azure blob storage
 // fetchJSON("weather-stations.geojson", function(data) {
     fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geojson", function(data) {
