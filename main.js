@@ -28,7 +28,7 @@ function fetchJSON(url, callback) {
 
 // Change map variable
 
-function getVar(set,displayIndex=displayIndex){
+function getVar(set){
     startData = set.Value;
 
     if(displayIndex < 7){displayData = set.value + "_hist"}else{displayData = set.value +"_zero"};
