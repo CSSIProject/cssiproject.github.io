@@ -282,15 +282,13 @@ map.on('mouseenter', 'set-fills', function (e) {
     var swdvalue;
     var etvalue;
     if(displayIndex > 7){
-        var swdvalue = e.features[0].properties.SoilDef_hist[displayIndex];
-        var etvalue = e.features[0].properties.ET_hist[displayIndex];
+        var swdvalue = JSON.parse(e.features[0].properties.SoilDef_hist)[displayIndex];
+        var etvalue = JSON.parse(e.features[0].properties.ET_hist)[displayIndex];
     };
-        var lastigindex = e.features[0].properties.NetApp_hist;
-    console.log(lastigindex);
-    lastigindex = lastigindex.reverse().findIndex((x) => x > 0);
-    var nextigindex = e.features[0].properties.NetApp_zero.findIndex((x) => x > 0);
-    var lastigtext = `${e.features[0].properties.NetApp_hist.reverse()[lastigindex]} mm on  ${dateFormat(e.features[0].properties.GraphDate[lastigindex],"dd mmm")}`
-    var nextigtext = `${e.features[0].properties.NetApp_zero[nextigindex]} mm on  ${dateformat(e.features[0].properties.GraphDate[nextigindex],"dd mmm")}`
+        var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
+    var nextigindex = JSON.parse(e.features[0].properties.NetApp_zero).findIndex((x) => x > 0);
+    var lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex]} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
+    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex]} mm on  ${dateformat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
     var description =  
         '<div class="popup-content">' +
         `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
