@@ -202,11 +202,6 @@ var zones;
 var sets;
 var stations;
 
-var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-var startData = "SoilDef";
-var displayData = "SoilDef_zero";
-
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJvbnNvbnBoaWxpcHBhIiwiYSI6ImNqeGp1cWFzNjA3dGEzbnFmMGRvcTZjaXkifQ.gKYwAr9h6yprnsOG3LiU-w';
 const map = new mapboxgl.Map({
@@ -235,6 +230,13 @@ fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/aalinton@bigpon
     sets = {metadata: metadata, data: data};
     finishLoading();
 });
+
+// set some global variables for mapping
+
+var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+var startData = "SoilDef";
+var displayData = "SoilDef_zero";
 
 // When a click occurs on a feature in the bom-stations layer, open a popup at the
 // location of the feature, with ....
