@@ -556,7 +556,7 @@ const myfarmView = {
             document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value];
             displayIndex = sets.metadata.dates.indexOf(sets.metadata.dates[value]);
             // need to change the variable being plotted based on date being shown
-            if(displayIndex < 8){displayData = startData.split("_")[0]+"_hist"}else{displayData = startData.split("_")[0]+"_zero"};
+            if(displayIndex < 7){displayData = startData.split("_")[0]+"_hist"}else{displayData = startData.split("_")[0]+"_zero"};
             map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
                     ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
@@ -629,7 +629,6 @@ const myfarmView = {
                 // Draw the plot
                 var matchingFeatures = sets.data.features.filter(function (f) { return f.id == myfarmView.currentBlock });
                 if (matchingFeatures.length == 1) {
-                    var plotY = matchingFeatures[0].properties["SoilDef"];
                     var plotX = matchingFeatures[0].properties["GraphDate"];
             
                     Plotly.newPlot("myfarm-plot", 
