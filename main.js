@@ -673,7 +673,9 @@ const myfarmView = {
                                 b: 30,
                                 l: 55,
                                 r: 5
-                            },
+                            }
+                    },
+                    {
                         displayModeBar: false,
                         responsive: true
                         });
