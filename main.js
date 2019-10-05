@@ -644,11 +644,11 @@ const myfarmView = {
                           marker: {color: '#0000FF'}
                          },
                         {x: plotX,
-                          y: matchingFeatures[0].properties["NetApp_hist"],
-                          type: 'bar',
-                          name: 'irrig_applied',
-                          axis: 'y2'
-                          marker: {color: '#000000'}
+                         y: matchingFeatures[0].properties["NetApp_hist"],
+                         type: 'bar',
+                         name: 'irrig_applied',
+                         axis: 'y2',
+                         marker: {color: '#000000'}
                          },
                          {x: plotX,
                           y: matchingFeatures[0].properties["NetApp_zero"],
