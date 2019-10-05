@@ -241,7 +241,7 @@ function finishLoading() {
     //var startDate = sets.metadata.dates[0]; // todo use today's date instead
     let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
     let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-    let startData = "SoilDef";
+    let startData = "SoilDef_zero";
     let displayIndex = null;
     let displayData = null; 
 
@@ -506,11 +506,11 @@ const myfarmView = {
             //return d.substring(6, 8) + "/" + d.substring(4, 6);
         });
         var maxIndex = sets.metadata.dates.length-1;
-        let startData = "SoilDef";
+        let startData = "SoilDef_zero";
         let displayData = null;
         let startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
         let startIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-        console.log(`maxIndex: ${maxIndex}`)    
+  
         noUiSlider.create(dateSlider, {
             range: {
                 'min': 0,
@@ -555,6 +555,8 @@ const myfarmView = {
         dateSlider.noUiSlider.on('update', function(value, handle) {
             document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value];
             displayIndex = sets.metadata.dates.indexOf(sets.metadata.dates[value]);
+            // need to change the variable being plotted based on date being shown
+            if(displayIndex < 8){displayData = startData.split("_")[0]+"_hist"}else{displayData = startData.split("_")[0]+"_zero"};
             map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
                     ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
@@ -648,18 +650,23 @@ const myfarmView = {
                          type: 'bar',
                          name: 'irrig_applied',
                          axis: 'y2',
-                         marker: {color: '#000000'}
+                        marker: {color: '#000000'}
                          },
                          {x: plotX,
                           y: matchingFeatures[0].properties["NetApp_zero"],
                           type: 'bar',
                           name: 'irrig_schedule',
                           axis: 'y2',
-                          marker: {color: '#0000FF'}
+                         marker: {color: '#0000FF'}
                          }],
                         {
                             yaxis: {
                                 title: 'SWD (mm)'
+                            },
+                            yaxis2: {
+                                overlaying: 'y',
+                                side: 'right',
+                                range: [-20,160]
                             },
                             margin: {
                                 t: 0,
