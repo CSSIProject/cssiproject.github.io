@@ -285,7 +285,9 @@ map.on('mouseenter', 'set-fills', function (e) {
         var swdvalue = e.features[0].properties.SoilDef_hist[displayIndex];
         var etvalue = e.features[0].properties.ET_hist[displayIndex];
     };
-        var lastigindex = e.features[0].properties.NetApp_hist.reverse().findIndex((x) => x > 0);
+        var lastigindex = e.features[0].properties.NetApp_hist;
+    console.log(lastigindex);
+    lastigindex = lastigindex.reverse().findIndex((x) => x > 0);
     var nextigindex = e.features[0].properties.NetApp_zero.findIndex((x) => x > 0);
     var lastigtext = `${e.features[0].properties.NetApp_hist.reverse()[lastigindex]} mm on  ${dateFormat(e.features[0].properties.GraphDate[lastigindex],"dd mmm")}`
     var nextigtext = `${e.features[0].properties.NetApp_zero[nextigindex]} mm on  ${dateformat(e.features[0].properties.GraphDate[nextigindex],"dd mmm")}`
