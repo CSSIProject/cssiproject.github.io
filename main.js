@@ -667,18 +667,15 @@ const myfarmView = {
                             yaxis2: {
                                 overlaying: 'y',
                                 side: 'right',
-                                range: [-20,160]
                             },
                             margin: {
                                 t: 0,
                                 b: 30,
                                 l: 55,
                                 r: 5
-                            }
-                        },
-                        {
-                            displayModeBar: false,
-                            responsive: true
+                            },
+                        displayModeBar: false,
+                        responsive: true
                         });
                 } else {
                     // Don't have SWD data to plot.
