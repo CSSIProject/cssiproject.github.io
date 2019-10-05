@@ -31,7 +31,7 @@ function fetchJSON(url, callback) {
 function getVar(set){
     startData = set.Value;
 
-    if(displayIndex < 7){displayData = set.value + "_hist"}else{displayData = set.value +"_zero"};
+    if(displayIndex < 7){displayData = set.Value + "_hist"}else{displayData = set.Value +"_zero"};
     
     if(set.value === "SoilDef"){
        //update the map
@@ -67,7 +67,7 @@ function getVar(set){
         } else if (set.value === "NetApp"){
                     map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
-                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     0,"#d53e4f",
                     20,"#fc8d59",
                     40,"#fee08b",
