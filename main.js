@@ -636,12 +636,14 @@ const myfarmView = {
                           y: matchingFeatures[0].properties["SoilDef_hist"],
                           type: 'scatter',
                           name: 'current',
+                          axis: 'y',
                           marker: {color: '#000000'}
                          },
                          {x: plotX,
                           y: matchingFeatures[0].properties["SoilDef_zero"],
                           type: 'scatter',
                           name: 'ZeroRainfall',
+                          axis: 'y',
                           marker: {color: '#0000FF'}
                          },
                         {x: plotX,
