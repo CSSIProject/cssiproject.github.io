@@ -63,7 +63,7 @@ function getVar(set){
                 ]);
                 //update the legend colour list
                 cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-                labs = ['-100','-80','-60',"-40","-20","0","20"];
+                labs = ['0','2','4',"6","8","10","12"];
         } else if (set.value === "NetApp"){
                     map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
