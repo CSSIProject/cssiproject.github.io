@@ -88,8 +88,8 @@ function getVar(set,displayIndex=displayIndex){
             item.appendChild(value);
             legend.removeChild(legend.childNodes[3]);
             legend.appendChild(item);
-    
-}; 
+  }; 
+};
 
 
 
