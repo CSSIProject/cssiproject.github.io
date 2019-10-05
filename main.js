@@ -52,7 +52,7 @@ function getVar(set){
         } else if (set.value === "ET"){
             map.setPaintProperty('set-fills','fill-color',["interpolate",
                     ["linear"],
-                    ["number",["at",["number",displayIndex,startIndex],["get",["string",displayData,startData]]],0],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     0,"#d53e4f",
                     2,"#fc8d59",
                     4,"#fee08b",
