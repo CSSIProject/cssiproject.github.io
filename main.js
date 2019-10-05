@@ -299,8 +299,10 @@ map.on('mouseenter', 'set-fills', function (e) {
         `<div title="LastIrr">Last Irr: ${lastigtext} (mm)</div>` +
         `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
 
-    new mapboxgl.Popup()
+    var popup = new mapboxgl.Popup();
+    popup
     .setHTML(description)
+    .setLngLat(e.lngLat)
     .addTo(map);
 });
 
