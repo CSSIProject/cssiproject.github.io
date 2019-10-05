@@ -29,10 +29,10 @@ function fetchJSON(url, callback) {
 // Change map variable
 
 function getVar(set){
-    startData = set.Value;
+    startData = set.value;
 
-    if(displayIndex < 7){displayData = set.Value + "_hist"}else{displayData = set.Value +"_zero"};
-    
+    if(displayIndex < 7){displayData = set.value + "_hist"}else{displayData = set.value +"_zero"};
+    console.log(`getvar displayIndex is: ${displayIndex} and displayData is: $displayData}`);
     if(set.value === "SoilDef"){
        //update the map
        map.setPaintProperty('set-fills','fill-color',["interpolate",
