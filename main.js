@@ -201,6 +201,13 @@ var map_loaded = false;
 var zones;
 var sets;
 var stations;
+
+var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+var startData = "SoilDef";
+var displayData = "SoilDef_zero";
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJvbnNvbnBoaWxpcHBhIiwiYSI6ImNqeGp1cWFzNjA3dGEzbnFmMGRvcTZjaXkifQ.gKYwAr9h6yprnsOG3LiU-w';
 const map = new mapboxgl.Map({
     container: 'mainmap',
@@ -303,12 +310,6 @@ function finishLoading() {
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
-    //var startDate = sets.metadata.dates[0]; // todo use today's date instead
-    var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-    var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-    var startData = "SoilDef";
-    var displayData = "SoilDef_zero"; 
-
     map.addLayer({
         "id": "set-fills",
         "type": "fill",
@@ -570,10 +571,10 @@ const myfarmView = {
             //return d.substring(6, 8) + "/" + d.substring(4, 6);
         });
         var maxIndex = sets.metadata.dates.length-1;
-        var startData = "SoilDef";
-        var displayData = "SoilDef_zero";
-        var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-        var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+        //var startData = "SoilDef";
+        //var displayData = "SoilDef_zero";
+        //var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
+        //var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
   
         noUiSlider.create(dateSlider, {
             range: {
