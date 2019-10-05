@@ -56,7 +56,13 @@
 
     <div id="mainmap"></div>
     <div class='map-overlay map-overlay-step-0' id='legend'>
-      <div id='legend.name'><span class='legend-title'>SWD (mm)</span></div>
+      <div id='legend.name'>
+        <select id="farmplotvar" onChange="getVar(this)">
+          <option value="SoilDef"> SWD (mm) </option>  
+          <option value="ET"> > ET (mm) </option>
+          <option value="NetApp"> Irrigation (mm) </option>
+        </select>
+      </div>
     </div>
     <div id="myfarmcontainer" class="footer-container">
       <div class="footer-inner-container">
