@@ -277,29 +277,29 @@ map.on('click', 'bom-stations', function (e) {
 
 // When a click occurs on a feature in the myfarm layer, open a popup at the
 // location of the feature, with ....
-
+var popup = new mapboxgl.Popup();
 map.on('mouseenter', 'set-fills', function (e) {
     var swdvalue;
     var etvalue;
     if(displayIndex > 7){
-        var swdvalue = JSON.parse(e.features[0].properties.SoilDef_hist)[displayIndex];
-        var etvalue = JSON.parse(e.features[0].properties.ET_hist)[displayIndex];
+        swdvalue = JSON.parse(e.features[0].properties.SoilDef_hist)[displayIndex].toFixed(2);
+        etvalue = JSON.parse(e.features[0].properties.ET_hist)[displayIndex].toFixed(2);
     };
         var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
     var nextigindex = JSON.parse(e.features[0].properties.NetApp_zero).findIndex((x) => x > 0);
-    var lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex]} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
-    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex]} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
+    var lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
+    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
     var description =  
         '<div class="popup-content">' +
         `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
         `<div title="FieldName">Field: ${e.features[0].properties.FieldName}</div>` +
-        `<div title="BlockId">id: ${e.features[0].properties.id}</div>` +
+        `<div title="BlockId">id: ${e.features[0].id}</div>` +
         `<div title="SoilDef">SWD: ${swdvalue} (mm)</div>` +
-        `<div title="ET">SWD: ${etvalue} (mm)</div>` +
-        `<div title="LastIrr">Last Irr: ${lastigtext} (mm)</div>` +
+        `<div title="ET">ET: ${etvalue} (mm)</div>` +
+        `<div title="LastIrr">Last Irr: ${lastigtext}</div>` +
         `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
 
-    var popup = new mapboxgl.Popup();
+    
     popup
     .setHTML(description)
     .setLngLat(e.lngLat)
