@@ -279,16 +279,25 @@ map.on('click', 'bom-stations', function (e) {
 // location of the feature, with ....
 
 map.on('click', 'set-fills', function (e) {
-    
+    var swdvalue;
+    var etvalue;
+    if(displayIndex > 7){
+        var swdvalue = e.features[0].properties.SoilDef_hist[displayIndex];
+        var etvalue = e.features[0].properties.ET_hist[displayIndex];
+    };
+        var lastigindex = e.features[0].properties.NetApp_hist.reverse().findIndex((x) => x > 0);
+    var nextigindex = e.features[0].properties.NetApp_zero.findIndex((x) => x > 0);
+    var lastigtext = `${e.features[0].properties.NetApp_hist.reverse()[lastigindex]} mm on  ${dateFormat(e.features[0].properties.GraphDate[lastigindex],"dd mmm")}`
+    var nextigtext = `${e.features[0].properties.NetApp_zero[nextigindex]} mm on  ${dateformat(e.features[0].properties.GraphDate[nextigindex],"dd mmm")}`
     var description =  
         '<div class="popup-content">' +
         `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
         `<div title="FieldName">Field: ${e.features[0].properties.FieldName}</div>` +
         `<div title="BlockId">id: ${e.features[0].properties.id}</div>` +
-        `<div title="SoilDef">SWD: ${if(displayIndex < 7){return e.features[0].properties.SoilDef_hist[displayIndex]}else{return e.features[0].properties.SoilDef_zero[displayIndex]}} (mm)</div>` +
-        `<div title="ET">SWD: ${if(displayIndex < 7){return e.features[0].properties.ET_hist[displayIndex]}else{return e.features[0].properties.ET_zero[displayIndex]}} (mm)</div>` +
-        `<div title="LastIrr">Last Irr: ${if(displayIndex < 7){return e.features[0].properties.NetApp_hist[displayIndex]}else{return e.features[0].properties.NetApp_zero[displayIndex]}} (mm)</div>` +
-        `<div title="NextIrr">Next Irr: ${e.features[0].properties.next_irr}</div>`;
+        `<div title="SoilDef">SWD: ${swdvalue} (mm)</div>` +
+        `<div title="ET">SWD: ${etvalue} (mm)</div>` +
+        `<div title="LastIrr">Last Irr: ${lastigtext} (mm)</div>` +
+        `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
      
     // Ensure that if the map is zoomed out such that multiple
     // copies of the feature are visible, the popup appears
