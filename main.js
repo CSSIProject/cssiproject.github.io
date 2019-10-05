@@ -288,7 +288,7 @@ map.on('mouseenter', 'set-fills', function (e) {
         var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
     var nextigindex = JSON.parse(e.features[0].properties.NetApp_zero).findIndex((x) => x > 0);
     var lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex]} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
-    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex]} mm on  ${dateformat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
+    var nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex]} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
     var description =  
         '<div class="popup-content">' +
         `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
