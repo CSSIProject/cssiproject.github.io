@@ -278,7 +278,7 @@ map.on('click', 'bom-stations', function (e) {
 // When a click occurs on a feature in the myfarm layer, open a popup at the
 // location of the feature, with ....
 
-map.on('mouseover', 'set-fills', function (e) {
+map.on('mouseenter', 'set-fills', function (e) {
     var swdvalue;
     var etvalue;
     if(displayIndex > 7){
@@ -741,6 +741,7 @@ const myfarmView = {
             }
             hoveredSetID = null;
             map.getCanvas().style.cursor = '';
+            popup.remove();
         });
         map.on("click", function(e) {
             if (!myfarmView.active) {
