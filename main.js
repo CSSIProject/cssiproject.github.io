@@ -631,7 +631,32 @@ const myfarmView = {
                     var plotX = matchingFeatures[0].properties["GraphDate"];
             
                     Plotly.newPlot("myfarm-plot", 
-                        [{x: plotX, y: plotY, type: 'scatter'}],
+                        [{x: plotX,
+                          y: matchingFeatures[0].properties["SoilDef_hist"],
+                          type: 'scatter',
+                          name: 'current',
+                          marker: {color: '#000000'}
+                         },
+                         {x: plotX,
+                          y: matchingFeatures[0].properties["SoilDef_zero"],
+                          type: 'scatter',
+                          name: 'ZeroRainfall',
+                          marker: {color: '#0000FF'}
+                         },
+                        {x: plotX,
+                          y: matchingFeatures[0].properties["NetApp_hist"],
+                          type: 'bar',
+                          name: 'irrig_applied',
+                          axis: 'y2'
+                          marker: {color: '#000000'}
+                         },
+                         {x: plotX,
+                          y: matchingFeatures[0].properties["NetApp_zero"],
+                          type: 'bar',
+                          name: 'irrig_schedule',
+                          axis: 'y2',
+                          marker: {color: '#0000FF'}
+                         }],
                         {
                             yaxis: {
                                 title: 'SWD (mm)'
