@@ -213,7 +213,12 @@ var stations;
 mapboxgl.accessToken = 'pk.eyJ1IjoiYnJvbnNvbnBoaWxpcHBhIiwiYSI6ImNqeGp1cWFzNjA3dGEzbnFmMGRvcTZjaXkifQ.gKYwAr9h6yprnsOG3LiU-w';
 const map = new mapboxgl.Map({
     container: 'mainmap',
-    style: 'mapbox://styles/bronsonphilippa/cjy9int3m0kdx1cqjiay34tqt',
+    //style: 'mapbox://styles/bronsonphilippa/cjy9int3m0kdx1cqjiay34tqt',
+    //style: 'mapbox://styles/mapbox/streets-v11',
+    //style: 'mapbox://styles/mapbox/light-v10',
+    style: 'mapbox://styles/mapbox/dark-v10',
+    //style: 'mapbox://styles/mapbox/outdoors-v11',
+    //style: 'mapbox://styles/mapbox/satellite-v9',
     center: [147.420,-19.800],
     zoom: 10
 });
