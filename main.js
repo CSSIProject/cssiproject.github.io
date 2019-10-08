@@ -98,7 +98,12 @@ function getVar(set){
   }; 
 };
 
+// Change map background layer
 
+function switchLayer(layer) {
+    var layerId = layer.id;
+    map.setStyle('mapbox://styles/mapbox/' + layerId);  
+    }
 
 // generate wind direction
 
@@ -222,6 +227,11 @@ const map = new mapboxgl.Map({
     center: [147.420,-19.800],
     zoom: 10
 });
+
+map.on('style.load',function(){
+    finishLoading();
+});
+
 map.on('load', function() {
     map.loadImage("assets/bom-station-icon.png", function(error,image){
         if (error) throw error;
@@ -362,7 +372,7 @@ function finishLoading() {
           ],
           "fill-opacity": 0.6
         }
-      }, "landcover");
+      });
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
@@ -429,6 +439,10 @@ function finishLoading() {
             "icon-size": 0.5
         },
         "filter": ["==", "$type", "Point"],
+    });
+    map.loadImage("assets/bom-station-icon.png", function(error,image){
+        if (error) throw error;
+        map.addImage('bom-icon', image)
     });
 
     // Switch to the appropriate view

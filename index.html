@@ -30,7 +30,7 @@
             <a class="nav-link" href="#forecasts" onclick="forecastsView.switchTo()">Forecasts</a>
           </li>
           <li class="nav-item" id="navitem-myfarm" data-toggle="collapse" data-target=".navbar-collapse.show">
-            <a class="nav-link" href="#myfarm" data-toggle="modal" data-target="#signupModal" onclick="myfarmView.switchTo()">My farm</a>
+            <a class="nav-link" href="#myfarm" onclick="myfarmView.switchTo()">My farm</a>
           </li>
         </ul>
         <ul class="navbar-nav navbar-right">
@@ -64,6 +64,25 @@
         </select>
       </div>
     </div>
+    <div class='map-layer-btn' data-toggle="modal" data-target="#maplayerModal"><i class="icon-login"></i>Map View</div>
+
+    <!-- MAP LAYER OPTIONS -->
+    <div class="modal fade" id="maplayerModal" role="dialog" aria-labelledby="maplayerModal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class= "modal-content">
+          <div class="modal-body">
+              <div class="btn-group btn-group-justified">
+                  <a onClick="switchLayer(this)" class="btn btn-primary" id="satellite-v9" >Satellite</a>
+                  <a onClick="switchLayer(this)" class="btn btn-primary" id="streets-v11">Street</a>
+                  <a onClick="switchLayer(this)" class="btn btn-primary .active" id="dark-v10">Dark</a>
+                  <a onClick="switchLayer(this)" class="btn btn-primary" id="light-v10">Light</a>
+                  <a onClick="switchLayer(this)" class="btn btn-primary" id="outdoors-v11">Outdoors</a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="myfarmcontainer" class="footer-container">
       <div class="footer-inner-container">
         <div class="footer-heading">
@@ -111,6 +130,7 @@
         <div class="modal-footer">
         </div>
       </div>
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
