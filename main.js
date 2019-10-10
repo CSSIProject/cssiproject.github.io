@@ -290,53 +290,6 @@ map.on('click', 'bom-stations', function (e) {
     .addTo(map);
 });
 
-// When a click occurs on a feature in the myfarm layer, open a popup at the
-// location of the feature, with ....
-var popup = new mapboxgl.Popup();
-map.on('mouseenter', 'set-fills', function (e) {
-    var swdvalue;
-    var etvalue;
-    var lastigtext;
-    var nextigtext;
-    if(displayIndex > 7){
-        swdvalue = JSON.parse(e.features[0].properties.SoilDef_hist)[displayIndex].toFixed(2);
-        etvalue = JSON.parse(e.features[0].properties.ET_hist)[displayIndex].toFixed(2);
-    }else{
-        swdvalue = JSON.parse(e.features[0].properties.SoilDef_zero)[displayIndex].toFixed(2);
-        etvalue = JSON.parse(e.features[0].properties.ET_zero)[displayIndex].toFixed(2);
-    };
-    var lastigindex = Math.max(...JSON.parse(e.features[0].properties.NetApp_hist).map((value,index) => {if(value > 0){return index}else{return -1}}));
-    var nextigindex = JSON.parse(e.features[0].properties.NetApp_zero).findIndex((x) => x > 0);
-    if(lastigindex < 0){
-        lastigtext = "no irrigation last week";   
-    }else{
-        lastigtext = `${JSON.parse(e.features[0].properties.NetApp_hist)[lastigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[lastigindex],"dd mmm")}`
-    };
-    if(nextigindex < 0){
-        nextigtext = "no irrigation scheduled";
-    }else{
-        nextigtext = `${JSON.parse(e.features[0].properties.NetApp_zero)[nextigindex].toFixed(2)} mm on  ${dateFormat(JSON.parse(e.features[0].properties.GraphDate)[nextigindex],"dd mmm")}`
-    };
-    
-    var description =  
-        '<div class="popup-content">' +
-        `<div title="FarmName">Farm: ${e.features[0].properties.FarmName}</div>` +
-        `<div title="FieldName">Field: ${e.features[0].properties.FieldName}</div>` +
-        `<div title="BlockId">id: ${e.features[0].id}</div>` +
-        `<div title="SoilDef">SWD: ${swdvalue} (mm)</div>` +
-        `<div title="ET">ET: ${etvalue} (mm)</div>` +
-        `<div title="LastIrr">Last Irr: ${lastigtext}</div>` +
-        `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
-
-    
-    popup
-    .setHTML(description)
-    .setLngLat(e.lngLat)
-    .addTo(map);
-});
-
-
-
 // fetch BOM observations geojson from Azure blob storage
 // fetchJSON("weather-stations.geojson", function(data) {
     fetchJSON("https://cssipdata.blob.core.windows.net/bom-observed/Observations.geojson", function(data) {
@@ -534,29 +487,6 @@ const currentConditionsView = {
 
     reenter() {
         map.setLayoutProperty("bom-stations", "visibility", "visible");
-        /* this.markers = stations.data.features.map(function(stn) {
-            var element = $.parseHTML( 
-                '<div class="conditions-marker">' +
-        `<div title="site">${stn.properties.name}</div>` +
-        `<div title="${stn.properties.last_issued}">${stn.properties.last_issued.slice(10,22)}</div>` +
-        `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
-        ${stn.properties.apparent_t[stn.properties.apparent_t.length-1]}&deg;C</div>` +
-        `<div title="Wind direction and speed"><img src="assets/wind_e.png" class="inline-icon" title="Wind from the east">
-        ${stn.properties.wind_spd_kmh[stn.properties.wind_spd_kmh.length-1]}km/h
-        ${stn.properties.wind_dir[stn.properties.wind_dir.length-1]}</div>` +
-        `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
-        ${stn.properties.rain_trace[stn.properties.rain_trace.length-1]} mm</div>` +
-        '</div>',
-                document);
-            return new mapboxgl.Marker(
-                element[0],
-                {
-                    anchor: 'bottom'
-                })
-                .setLngLat(stn.geometry.coordinates)
-                .addTo(map);
-        });
-        */
         map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);  
     },
 
@@ -590,7 +520,9 @@ const forecastsView = {
 
     reenter() {
         // Already on this view. Reset the map view but do nothing else.
-        map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);  
+        map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);
+        //make sure the zone-fills layer is visible. This is to do with changing the background layer
+        map.setLayoutProperty("zone-fills", "visibility", "visible");  
     },
 
     exit() {
@@ -742,11 +674,6 @@ const myfarmView = {
                 cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
                 labs = ['0','20','40',"60","80","100","120"];
         };
-
-            //var blockIDs = sets.data.features.map(function (f) { return f.id });
-            //blockIDs.forEach(function(blockid) {
-            //    map.setFeatureState({source: 'sets', id: blockid}, { displayIndex: sets.metadata.dates.indexOf(sets.metadata.dates[value[0]])});
-            //});
         });
 
         // Set up hover effect on the sets 
@@ -801,8 +728,45 @@ const myfarmView = {
                 $("#mainmap").removeClass("map-step-1").addClass("map-step-2");
                 map.resize();
 
-                // Draw the plot
+                // setup the block summary
                 var matchingFeatures = sets.data.features.filter(function (f) { return f.id == myfarmView.currentBlock });
+
+                var swdvalue;
+                var etvalue;
+                var lastigtext;
+                var nextigtext;
+                if(displayIndex > 7){
+                    swdvalue = matchingFeatures[0].properties.SoilDef_hist[displayIndex].toFixed(2);
+                    etvalue = matchingFeatures[0].properties.ET_hist[displayIndex].toFixed(2);
+                }else{
+                    swdvalue = matchingFeatures[0].properties.SoilDef_zero[displayIndex].toFixed(2);
+                    etvalue = matchingFeatures[0].properties.ET_zero[displayIndex].toFixed(2);
+                };
+                var lastigindex = Math.max(...matchingFeatures[0].properties.NetApp_hist.map((value,index) => {if(value > 0){return index}else{return -1}}));
+                var nextigindex = matchingFeatures[0].properties.NetApp_zero.findIndex((x) => x > 0);
+                if(lastigindex < 0){
+                    lastigtext = "no irrigation last week";
+                }else{
+                    lastigtext = `${matchingFeatures[0].properties.NetApp_hist[lastigindex].toFixed(2)} mm on  ${dateFormat(matchingFeatures[0].properties.GraphDate[lastigindex],"dd mmm")}`
+                };
+                if(nextigindex < 0){
+                    nextigtext = "no irrigation scheduled";
+                }else{
+                    nextigtext = `${matchingFeatures[0].properties.NetApp_zero[nextigindex].toFixed(2)} mm on  ${dateFormat(matchingFeatures[0].properties.GraphDate[nextigindex],"dd mmm")}`
+                };
+    
+                var description =
+                `<div title="BlockId">id: ${matchingFeatures[0].id}</div>` +
+                `<div title="SoilDef">SWD: ${swdvalue} (mm)</div>` +
+                `<div title="ET">ET: ${etvalue} (mm)</div>` +
+                `<div title="LastIrr">Last Irr: ${lastigtext}</div>` +
+                `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
+
+                document.getElementById("block-heading").innerHTML=`${matchingFeatures[0].properties.FarmName} ": " ${matchingFeatures[0].properties.FieldName}`;
+                document.getElementById("myfarm-summary").innerHTML = description;
+
+                // Draw the plot
+                
                 if (matchingFeatures.length == 1) {
                     var plotX = matchingFeatures[0].properties["GraphDate"];
             
@@ -886,6 +850,9 @@ const myfarmView = {
             }
         };            
         map.stop().fitBounds(bounds,{padding:100});
+        // make sure the set-fills and set-borders are visible
+        map.setLayoutProperty("set-fills", "visibility", "visible");
+        map.setLayoutProperty("set-borders", "visibility", "visible");
     },
 
     exit() {
