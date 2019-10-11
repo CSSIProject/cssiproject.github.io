@@ -825,6 +825,7 @@ const myfarmView = {
 
     enter() {
         $("#myfarmcontainer").addClass("footer-container-step-1");
+        $("#legend").removeClass("map-overlay-step-0");
         $("#legend").addClass("map-overlay-step-1");
         $("#mainmap").addClass("map-step-1");
         map.resize();
