@@ -735,8 +735,8 @@ const myfarmView = {
                 var lastigtext;
                 var nextigtext;
                 // set swd and et to last 'observed' value
-                swdvalue = matchingFeatures[0].properties.SoilDef_zero[6].toFixed(2);
-                etvalue = matchingFeatures[0].properties.ET_zero[6].toFixed(2);
+                swdvalue = matchingFeatures[0].properties.SoilDef_hist[6].toFixed(2);
+                etvalue = matchingFeatures[0].properties.ET_hist[6].toFixed(2);
                 
                 var lastigindex = Math.max(...matchingFeatures[0].properties.NetApp_hist.map((value,index) => {if(value > 0){return index}else{return -1}}));
                 var nextigindex = matchingFeatures[0].properties.NetApp_zero.findIndex((x) => x > 0);
