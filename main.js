@@ -696,7 +696,6 @@ const myfarmView = {
             }
             hoveredSetID = null;
             map.getCanvas().style.cursor = '';
-            popup.remove();
         });
         map.on("click", function(e) {
             if (!myfarmView.active) {
