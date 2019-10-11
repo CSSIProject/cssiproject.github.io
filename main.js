@@ -735,13 +735,10 @@ const myfarmView = {
                 var etvalue;
                 var lastigtext;
                 var nextigtext;
-                if(displayIndex > 7){
-                    swdvalue = matchingFeatures[0].properties.SoilDef_hist[displayIndex].toFixed(2);
-                    etvalue = matchingFeatures[0].properties.ET_hist[displayIndex].toFixed(2);
-                }else{
-                    swdvalue = matchingFeatures[0].properties.SoilDef_zero[displayIndex].toFixed(2);
-                    etvalue = matchingFeatures[0].properties.ET_zero[displayIndex].toFixed(2);
-                };
+                // set swd and et to last 'observed' value
+                swdvalue = matchingFeatures[0].properties.SoilDef_zero[6].toFixed(2);
+                etvalue = matchingFeatures[0].properties.ET_zero[6].toFixed(2);
+                
                 var lastigindex = Math.max(...matchingFeatures[0].properties.NetApp_hist.map((value,index) => {if(value > 0){return index}else{return -1}}));
                 var nextigindex = matchingFeatures[0].properties.NetApp_zero.findIndex((x) => x > 0);
                 if(lastigindex < 0){
@@ -756,13 +753,13 @@ const myfarmView = {
                 };
     
                 var description =
-                `<div title="BlockId">id: ${matchingFeatures[0].id}</div>` +
-                `<div title="SoilDef">SWD: ${swdvalue} (mm)</div>` +
-                `<div title="ET">ET: ${etvalue} (mm)</div>` +
-                `<div title="LastIrr">Last Irr: ${lastigtext}</div>` +
-                `<div title="NextIrr">Next Irr: ${nextigtext}</div>`;
+                `<div title="BlockId">SWD and ET for end of day yesterday:</div>` +
+                `<div title="SoilDef">    SWD: ${swdvalue} (mm)</div>` +
+                `<div title="ET">    ET: ${etvalue} (mm)</div>` +
+                `<div title="LastIrr">Last Irrigation: ${lastigtext}</div>` +
+                `<div title="NextIrr">Next Irrigation: ${nextigtext}</div>`;
 
-                document.getElementById("block-heading").innerHTML=`${matchingFeatures[0].properties.FarmName} ": " ${matchingFeatures[0].properties.FieldName}`;
+                document.getElementById("block-heading").innerHTML=`${matchingFeatures[0].properties.FarmName}: ${matchingFeatures[0].properties.FieldName}`;
                 document.getElementById("myfarm-summary").innerHTML = description;
 
                 // Draw the plot
