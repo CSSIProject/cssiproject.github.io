@@ -850,6 +850,7 @@ const myfarmView = {
         // make sure the set-fills and set-borders are visible
         map.setLayoutProperty("set-fills", "visibility", "visible");
         map.setLayoutProperty("set-borders", "visibility", "visible");
+        $("#legend").removeClass("map-overlay-step-0");
         $("#legend").addClass("map-overlay-step-1");
         getvar(document.getElementById("farmplotvar"));
     },
