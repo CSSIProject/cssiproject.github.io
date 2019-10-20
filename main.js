@@ -240,7 +240,8 @@ map.on('load', function() {
     map_loaded = true;
     finishLoading();
 });
-fetchJSON("zones.geojson", function(data) {
+//get the latest forecast geojson from azure
+fetchJSON("https://cssipdata.blob.core.windows.net/weather-forecasts/zones_forecast.geojson", function(data) {
     var metadata = data.metadata;
     delete data.metadata;
     zones = {metadata: metadata, data: data};
@@ -317,10 +318,12 @@ function finishLoading() {
         "paint": {
           "fill-color": [
             "match",
-            ["get", "zone"],
-            1, "#93EBFF",
-            2, "#FFD6D6",
-            3, "#CCF990",
+            ["get", "cluster"],
+            "blue", "#0000FF",
+            "green", "#008000",
+            "grey", "#808080",
+              "orange", "#FFA500",
+              "red", "#FF0000",
             "#ffffff"
           ],
           "fill-opacity": 0.6
