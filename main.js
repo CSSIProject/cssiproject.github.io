@@ -311,7 +311,7 @@ function finishLoading() {
         "id": "zone-fills",
         "type": "fill",
         "source": "zones",
-        "filter": ["has", "zone"],
+        "filter": ["has", "cluster"],
         "layout": {
             "visibility": "none"
         },
