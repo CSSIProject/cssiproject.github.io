@@ -555,7 +555,7 @@ const forecastsView = {
     construct() {
         // Set up hover effect on the sets 
         var hoveredSetID = null;
-        map.on("mousemove", "zones-fills", function(e) {
+        map.on("mousemove", "zone-fills", function(e) {
             if (e.features.length > 0) {
                 map.getCanvas().style.cursor = 'pointer';
                 // unhighlight the previous set
@@ -567,7 +567,7 @@ const forecastsView = {
                 map.setFeatureState({source: "zones", id: hoveredSetID}, {hover: true});
             }
         });
-        map.on("mouseleave", "zones-fills", function(e) {
+        map.on("mouseleave", "zone-fills", function(e) {
             if (hoveredSetID) {
                 map.setFeatureState({source: "zones", id: hoveredSetID}, {hover: false});
             }
