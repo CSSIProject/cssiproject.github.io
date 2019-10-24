@@ -334,6 +334,38 @@ function finishLoading() {
             ]
         }
       });
+    // add fill layer for forecasts
+    displayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
+    startData = "daily_rain";
+    displayData = "daily_rain";
+    map.addLayer({
+        "id": "zone-fills",
+        "type": "fill",
+        "source": "zones",
+        "layout": {
+            "visibility": "none"
+        },
+        "paint": {
+            "fill-color":
+                ["interpolate",
+                   ["linear"],
+                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                0,"#d53e4f",
+                5,"#fc8d59",
+                10,"#fee08b",
+                15,"#ffffbf",
+                20,"#e6f598",
+                25,"#99d594",
+                30,"#3288bd",
+               ],
+            "fill-opacity": [
+                "case",
+                ["any", ["boolean", ["feature-state", "hover"], false], ["boolean", ["feature-state", "active"], false]],
+                1,
+                0.8
+            ]
+        }
+    });
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
@@ -521,8 +553,9 @@ const forecastsView = {
 
     enter() {
         map.setLayoutProperty("zone-borders", "visibility", "visible");
+        map.setLayoutProperty("zone-fills", "visibility", "visible");
         $("#myfarmcontainer").addClass("footer-container-step-0");
-        $("#legend").addClass("map-overlay-step-0");
+        $("#legend").addClass("map-overlay-step-1");
         this.reenter();
     },
 
@@ -530,13 +563,15 @@ const forecastsView = {
         // Already on this view. Reset the map view but do nothing else.
         map.stop().fitBounds([[146.980, -19.458], [147.579, -20.332]]);
         //make sure the zone-borders layer is visible. This is to do with changing the background layer
-        map.setLayoutProperty("zone-borders", "visibility", "visible");  
+        map.setLayoutProperty("zone-borders", "visibility", "visible");
+        map.setLayoutProperty("zone-fills", "visibility", "visible");
     },
 
     exit() {
         map.setLayoutProperty("zone-borders", "visibility", "none");
+        map.setLayoutProperty("zone-fills", "visibility", "none");
         $("#myfarmcontainer").removeClass("footer-container-step-0");
-        $("#legend").removeClass("map-overlay-step-0");
+        $("#legend").removeClass("map-overlay-step-1");
     }
 }
 
