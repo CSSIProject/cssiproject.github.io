@@ -304,7 +304,9 @@ function finishLoading() {
     if (!map_loaded || zones === undefined || sets == undefined || stations == undefined) {
         return;
     }
-
+    // Load zone data and add it to the map
+    map.addSource("zones", {"type": "geojson", "data": zones.data});
+    
     // add fill layer for forecasts
     displayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
     startData = "daily_rain";
@@ -338,8 +340,6 @@ function finishLoading() {
         }
     });
     
-    // Load zone data and add it to the map
-    map.addSource("zones", {"type": "geojson", "data": zones.data});
     map.addLayer({
         "id": "zone-borders",
         "type": "line",
