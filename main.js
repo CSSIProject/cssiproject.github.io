@@ -362,8 +362,8 @@ function finishLoading() {
             "line-width": [
                 "case",
                 ["boolean", ["feature-state", "active"], false],
-                9,
-                5
+                5,
+                0
             ]
         }
       });
