@@ -560,7 +560,7 @@ const forecastsView = {
                 map.getCanvas().style.cursor = 'pointer';
                 // unhighlight the previous set
                 if (hoveredSetID) {
-                    map.setFeatureState({source: "sets", id: hoveredSetID}, {hover: false});
+                    map.setFeatureState({source: "zones", id: hoveredSetID}, {hover: false});
                 }
                 // highlight this one
                 hoveredSetID = e.features[0].id;
