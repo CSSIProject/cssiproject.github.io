@@ -305,35 +305,6 @@ function finishLoading() {
         return;
     }
 
-    // Load zone data and add it to the map
-    map.addSource("zones", {"type": "geojson", "data": zones.data});
-    map.addLayer({
-        "id": "zone-borders",
-        "type": "line",
-        "source": "zones",
-        "filter": ["has", "cluster"],
-        "layout": {
-            "visibility": "none"
-        },
-        "paint": {
-          "line-color": [
-            "match",
-            ["get", "cluster"],
-            "blue", "#0000FF",
-            "green", "#008000",
-            "grey", "#808080",
-              "orange", "#FFA500",
-              "red", "#FF0000",
-            "#ffffff"
-          ],
-            "line-width": [
-                "case",
-                ["boolean", ["feature-state", "active"], false],
-                9,
-                5
-            ]
-        }
-      });
     // add fill layer for forecasts
     displayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
     startData = "daily_rain";
@@ -366,6 +337,36 @@ function finishLoading() {
             ]
         }
     });
+    
+    // Load zone data and add it to the map
+    map.addSource("zones", {"type": "geojson", "data": zones.data});
+    map.addLayer({
+        "id": "zone-borders",
+        "type": "line",
+        "source": "zones",
+        "filter": ["has", "cluster"],
+        "layout": {
+            "visibility": "none"
+        },
+        "paint": {
+          "line-color": [
+            "match",
+            ["get", "cluster"],
+            "blue", "#0000FF",
+            "green", "#008000",
+            "grey", "#808080",
+              "orange", "#FFA500",
+              "red", "#FF0000",
+            "#ffffff"
+          ],
+            "line-width": [
+                "case",
+                ["boolean", ["feature-state", "active"], false],
+                9,
+                5
+            ]
+        }
+      });
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
@@ -550,6 +551,31 @@ const currentConditionsView = {
 const forecastsView = {
     __proto__: viewType,
     navitem: "#navitem-forecasts",
+    
+    construct() {
+        // Set up hover effect on the sets 
+        var hoveredSetID = null;
+        map.on("mousemove", "zones-fills", function(e) {
+            if (e.features.length > 0) {
+                map.getCanvas().style.cursor = 'pointer';
+                // unhighlight the previous set
+                if (hoveredSetID) {
+                    map.setFeatureState({source: "sets", id: hoveredSetID}, {hover: false});
+                }
+                // highlight this one
+                hoveredSetID = e.features[0].id;
+                map.setFeatureState({source: "zones", id: hoveredSetID}, {hover: true});
+            }
+        });
+        map.on("mouseleave", "zones-fills", function(e) {
+            if (hoveredSetID) {
+                map.setFeatureState({source: "zones", id: hoveredSetID}, {hover: false});
+            }
+            hoveredSetID = null;
+            map.getCanvas().style.cursor = '';
+        });
+    
+    },
 
     enter() {
         map.setLayoutProperty("zone-borders", "visibility", "visible");
