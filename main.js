@@ -326,7 +326,12 @@ function finishLoading() {
               "red", "#FF0000",
             "#ffffff"
           ],
-          "fill-opacity": 0.6
+            "line-width": [
+                "case",
+                ["boolean", ["feature-state", "active"], false],
+                9,
+                5
+            ]
         }
       });
 
