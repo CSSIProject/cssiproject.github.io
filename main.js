@@ -580,8 +580,8 @@ const forecastsView = {
     enter() {
         map.setLayoutProperty("zone-borders", "visibility", "visible");
         map.setLayoutProperty("zone-fills", "visibility", "visible");
-        $("#myfarmcontainer").addClass("footer-container-step-0");
-        $("#legend").addClass("map-overlay-step-1");
+        $("#myfarmcontainer").addClass("footer-container-step-1");
+        $("#mainmap").addClass("map-step-1");
         this.reenter();
     },
 
@@ -591,12 +591,16 @@ const forecastsView = {
         //make sure the zone-borders layer is visible. This is to do with changing the background layer
         map.setLayoutProperty("zone-borders", "visibility", "visible");
         map.setLayoutProperty("zone-fills", "visibility", "visible");
+        $("#legend").removeClass("map-overlay-step-0");
+        $("#legend").addClass("map-overlay-step-1");
     },
 
     exit() {
         map.setLayoutProperty("zone-borders", "visibility", "none");
         map.setLayoutProperty("zone-fills", "visibility", "none");
-        $("#myfarmcontainer").removeClass("footer-container-step-0");
+        $("#myfarmcontainer").removeClass("footer-container-step-1").removeClass("footer-container-step-2");
+        $("#legend").removeClass("map-overlay-step-1");
+        $("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
         $("#legend").removeClass("map-overlay-step-1");
     }
 }
