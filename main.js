@@ -7,6 +7,11 @@ var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
 var displayIndex; 
 var startData = "SoilDef";
 var displayData = "SoilDef_zero";
+var forecastdisplayIndex;
+var forecaststartData;
+var forecastdisplayData;
+var cols;
+var labs;
 
 // Fetch JSON 
 function fetchJSON(url, callback) {
@@ -26,9 +31,67 @@ function fetchJSON(url, callback) {
     xhr.send("");
 }
 
-// Change map variable
+// creating legend
 
-function getVar(set){
+function createLegend(cols,labs,elementname='legend-body',containername='legend',orientation = "horizontal"){
+    // Set up legend overlay
+    // a list of colours and values
+    //var cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+    //var labs = ['-100','-80','-60',"-40","-20","0","20"];
+        
+        if(orientation == "horizontal"){
+
+            var values = document.createElement('div');
+            var keys = document.createElement('div');
+            var items = document.createElement('div');
+            for (i = 0; i < labs.length; i++) {
+                var lab = labs[i];
+                var col = cols[i];
+                var key = document.createElement('span');
+                var value = document.createElement('span');
+                key.className = 'legend-key';
+                key.style.backgroundColor = col;
+                key.style.marginRight = '0.1rem';          
+                value.innerHTML = lab;
+                value.style['text-align'] = 'right';
+                value.style['writing-mode'] = 'vertical-rl';
+                value.style.fontSize = '0.7rem';
+                value.style.maxWidth= '0.8rem';
+                values.appendChild(value);
+                keys.appendChild(key);
+
+            };
+            values.className='legend-body';
+            keys.className='legend-body';
+            items.append(keys);
+            items.append(values);
+            items.style.marginTop = '0.2rem';
+        }else if(orientation == "vertical"){
+            var items = document.createElement('div');
+
+            for (i = 0; i < labs.length; i++) {
+                var lab = labs[i];
+                var col = cols[i];
+                var item = document.createElement('div');
+                var key = document.createElement('span');
+                key.className = 'legend-key';
+                key.style.backgroundColor = col;
+                var value = document.createElement('span');
+                value.innerHTML = lab;
+                item.appendChild(key);
+                item.appendChild(value);
+                items.appendChild(item);
+            };
+
+        }else{
+            console.error("please select a valid orientation");
+        };
+        document.getElementById(elementname).innerHTML = items.outerHTML;
+};
+
+// Change farm map variable
+
+function getfarmVar(set){
     startData = set.value;
 
     if(displayIndex < 7){displayData = set.value + "_hist"}else{displayData = set.value +"_zero"};
@@ -80,23 +143,74 @@ function getVar(set){
                 cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
                 labs = ['0','20','40',"60","80","100","120"];
         };
-
-    for (i = 0; i < labs.length; i++) {
-            var lab = labs[i];
-            var col = cols[i];
-            var item = document.createElement('div');
-            var key = document.createElement('span');
-            key.className = 'legend-key';
-            key.style.backgroundColor = col;
-      
-            var value = document.createElement('span');
-            value.innerHTML = lab;
-            item.appendChild(key);
-            item.appendChild(value);
-            legend.removeChild(legend.childNodes[3]);
-            legend.appendChild(item);
-  }; 
+createLegend(cols,labs);
 };
+
+// Change forecast map variable
+
+function getforecastVar(set){
+    forecaststartData = set.value;
+    forecastdisplayData = set.value;
+
+    if(set.value === "DailyPercip50pct_SFC"|set.value === "DailyPercip25pct_SFC"|set.value === "DailyPercip75pct_SFC"|set.value === "DailyCWU_SFC"){
+       //update the map
+       map.setPaintProperty('zone-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    1,"#9e0142",
+                    5,"#d53e4f",
+                    10,"#f46d43",
+                    15,"#fdae61",
+                    20,"#fee08b",
+                    40,"#e6f598",
+                    60,"#abdda4",
+                    80,"#66c2a5",
+                    100,"#3288bd",
+                    120,"#5e4fa2",
+                ]);
+        //update the legend colour list
+        cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
+        labs = ['1','5','10',"15","20","40","60","80","100","120"];
+        } else if (set.value === "DailyPoP_SFC"){
+            map.setPaintProperty('zone-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    10,"#9e0142",
+                    20,"#d53e4f",
+                    30,"#f46d43",
+                    40,"#fdae61",
+                    50,"#fee08b",
+                    60,"#e6f598",
+                    70,"#abdda4",
+                    80,"#66c2a5",
+                    90,"#3288bd",
+                    100,"#5e4fa2",
+                ]);
+                //update the legend colour list
+                cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
+                labs = ['10','20','30',"40","50","60","70","80","90","100"];
+        } else if (set.value === "MinT_SFC"|set.value === "MaxT_SFC"){
+                    map.setPaintProperty('zone-fills','fill-color',["interpolate",
+                    ["linear"],
+                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    -5,"#5e4fa2",
+                    0,"#3288bd",
+                    5,"#66c2a5",
+                    10,"#abdda4",
+                    15,"#e6f598",
+                    20,"#fee08b",
+                    25,"#fdae61",
+                    30,"#f46d43",
+                    35,"#d53e4f",
+                    40,"#9e0142",
+                ]);
+                //update the legend colour list
+                cols = ["#5e4fa2","#3288bd","#66c2a5","#abdda4","#e6f598","#fee08b","#fdae61","#f46d43","#d53e4f","#9e0142"];
+                labs = ['-5','0','5',"10","15","20","25","30","35","40"];
+        };
+createLegend(cols,labs);
+};
+
 
 // Change map background layer
 
@@ -308,9 +422,9 @@ function finishLoading() {
     map.addSource("zones", {"type": "geojson", "data": zones.data});
     
     // add fill layer for forecasts
-    displayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
-    startData = "daily_rain";
-    displayData = "daily_rain";
+    forecastdisplayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
+    forecaststartData = "DailyPercip50pct_SFC";
+    forecastdisplayData = "DailyPercip50pct_SFC";
     map.addLayer({
         "id": "zone-fills",
         "type": "fill",
@@ -322,14 +436,17 @@ function finishLoading() {
             "fill-color":
                 ["interpolate",
                    ["linear"],
-                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
-                0,"#d53e4f",
-                5,"#fc8d59",
-                10,"#fee08b",
-                15,"#ffffbf",
-                20,"#e6f598",
-                25,"#99d594",
-                30,"#3288bd",
+                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    1,"#9e0142",
+                    5,"#d53e4f",
+                    10,"#f46d43",
+                    15,"#fdae61",
+                    20,"#fee08b",
+                    40,"#e6f598",
+                    60,"#abdda4",
+                    80,"#66c2a5",
+                    100,"#3288bd",
+                    120,"#5e4fa2",
                ],
             "fill-opacity": [
                 "case",
@@ -363,7 +480,7 @@ function finishLoading() {
                 "case",
                 ["boolean", ["feature-state", "active"], false],
                 5,
-                0
+                3
             ]
         }
       });
@@ -553,6 +670,14 @@ const forecastsView = {
     navitem: "#navitem-forecasts",
     
     construct() {
+        // Set up legend overlay
+        // a list of colours and values
+        cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
+        labs = ['1','5','10',"15","20","40","60","80","100","120"];
+        // add in a div for each colour / label combo
+        createLegend(cols,labs);
+
+
         // Set up hover effect on the sets 
         var hoveredSetID = null;
         map.on("mousemove", "zone-fills", function(e) {
@@ -593,6 +718,9 @@ const forecastsView = {
         map.setLayoutProperty("zone-fills", "visibility", "visible");
         $("#legend").removeClass("map-overlay-step-0");
         $("#legend").addClass("map-overlay-step-1");
+        document.getElementById('forecastplotvar').style.display = "block";
+        document.getElementById('farmplotvar').style.display = "none";
+        getforecastVar(document.getElementById("forecastplotvar"));
     },
 
     exit() {
@@ -602,6 +730,7 @@ const forecastsView = {
         $("#legend").removeClass("map-overlay-step-1");
         $("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
         $("#legend").removeClass("map-overlay-step-1");
+        document.getElementById('forecastplotvar').style.display = "none";
     }
 }
 
@@ -619,25 +748,10 @@ const myfarmView = {
     construct() {
         // Set up legend overlay
         // a list of colours and values
-        var cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-        var labs = ['-100','-80','-60',"-40","-20","0","20"];
+        cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
+        labs = ['-100','-80','-60',"-40","-20","0","20"];
         // add in a div for each colour / label combo
-        
-        for (i = 0; i < labs.length; i++) {
-            var lab = labs[i];
-            var col = cols[i];
-            var item = document.createElement('div');
-            var key = document.createElement('span');
-            key.className = 'legend-key';
-            key.style.backgroundColor = col;
-      
-            var value = document.createElement('span');
-            value.innerHTML = lab;
-            item.appendChild(key);
-            item.appendChild(value);
-            legend.appendChild(item);
-        };
-        
+        createLegend(cols,labs);
         // Set up date slider
         var dateSlider = document.getElementById('myfarm-date-range');
         var formattedDates = sets.metadata.dates.map(function(d) {
@@ -906,7 +1020,7 @@ const myfarmView = {
         map.setLayoutProperty("set-fills", "visibility", "visible");
         map.setLayoutProperty("set-borders", "visibility", "visible");
         map.setLayoutProperty("zone-borders", "visibility", "none");
-        getvar(document.getElementById("farmplotvar"));
+        getfarmVar(document.getElementById("farmplotvar"));
 
         this.reenter();
     },
@@ -926,7 +1040,9 @@ const myfarmView = {
         map.setLayoutProperty("set-borders", "visibility", "visible");
         $("#legend").removeClass("map-overlay-step-0");
         $("#legend").addClass("map-overlay-step-1");
-        getvar(document.getElementById("farmplotvar"));
+        getfarmVar(document.getElementById("farmplotvar"));
+        document.getElementById('farmplotvar').style.display = "block";
+        document.getElementById('forecastplotvar').style.display = "none";
     },
 
     exit() {
@@ -935,6 +1051,7 @@ const myfarmView = {
         $("#myfarmcontainer").removeClass("footer-container-step-1").removeClass("footer-container-step-2");
         $("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
         $("#legend").removeClass("map-overlay-step-1");
+        document.getElementById('farmplotvar').style.display = "none";
         map.resize();
 
     }

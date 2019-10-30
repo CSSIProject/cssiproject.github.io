@@ -16,7 +16,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <a class="navbar-brand" href="#" onclick="currentConditionsView.switchTo()">CSSIP</a>
+      <a class="navbar-brand" href="#" onclick="currentConditionsView.switchTo()">OptiCane</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -56,13 +56,24 @@
 
     <div id="mainmap"></div>
     <div class='map-overlay map-overlay-step-0' id='legend'>
-      <div id='legend.name'>
-        <select id="farmplotvar" onChange="getVar(this)">
+      <div id='legend-name'>
+        <select id="farmplotvar" onChange="getfarmVar(this)">
           <option selected value="SoilDef"> SWD (mm) </option>  
           <option value="ET"> ET (mm) </option>
           <option value="NetApp"> Irrigation (mm) </option>
         </select>
+        <select id="forecastplotvar" onChange="getforecastVar(this)">
+          <option selected value="DailyPercip50pct_SFC"> 50% rain (mm) </option>  
+          <option value="DailyPercip75Pct_SFC"> 75% rain (mm) </option>
+          <option value="DailyPercip25Pct_SFC"> 25% rain (mm) </option>
+          <option value="DailyPoP_SFC"> Rain Prob (%) </option>  
+          <option value="MinT_SFC"> Min Temp (&deg;C) </option>
+          <option value="MaxT_SFC"> Max Temp (&deg;C) </option>
+          <option value="DailyCWU_SFC"> ET (mm) </option>
+          <option value="DailyRadn_SFC"> Radn (Mj/m2) </option>
+        </select>
       </div>
+    <div id='legend-body' class='legend-body'></div>
     </div>
     <div class='map-layer-btn' data-toggle="modal" data-target="#maplayerModal"><i class="icon-login"></i>Map View</div>
 
@@ -71,12 +82,12 @@
       <div class="modal-dialog" role="document">
         <div class= "modal-content">
           <div class="modal-body">
-              <div class="btn-group btn-group-justified">
-                  <a onClick="switchLayer(this)" class="btn btn-primary" id="satellite-v9" >Satellite</a>
-                  <a onClick="switchLayer(this)" class="btn btn-primary" id="streets-v11">Street</a>
-                  <a onClick="switchLayer(this)" class="btn btn-primary .active" id="dark-v10">Dark</a>
-                  <a onClick="switchLayer(this)" class="btn btn-primary" id="light-v10">Light</a>
-                  <a onClick="switchLayer(this)" class="btn btn-primary" id="outdoors-v11">Outdoors</a>
+              <div class="btn-group" role="group">
+                  <button type="button" onClick="switchLayer(this)" class="btn-dark" id="satellite-v9" >Satellite</button>
+                  <button type="button" onClick="switchLayer(this)" class="btn-dark" id="streets-v11">Street</button>
+                  <button type="button" onClick="switchLayer(this)" class="btn-dark .active" aria-pressed=true id="dark-v10">Dark</button>
+                  <button type="button" onClick="switchLayer(this)" class="btn-dark" id="light-v10">Light</button>
+                  <button type="button" onClick="switchLayer(this)" class="btn-dark" id="outdoors-v11">Outdoors</button>
               </div>
           </div>
         </div>
