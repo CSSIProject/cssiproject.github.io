@@ -152,7 +152,7 @@ function getforecastVar(set){
     forecaststartData = set.value;
     forecastdisplayData = set.value;
 
-    if(set.value === "DailyPercip50pct_SFC"|set.value === "DailyPercip25pct_SFC"|set.value === "DailyPercip75pct_SFC"|set.value === "DailyCWU_SFC"){
+    if(set.value === "DailyPrecip50pct_SFC"|set.value === "DailyPrecip25pct_SFC"|set.value === "DailyPrecip75pct_SFC"|set.value === "DailyCWU_SFC"){
        //update the map
        map.setPaintProperty('zone-fills','fill-color',["interpolate",
                     ["linear"],
