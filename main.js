@@ -319,7 +319,111 @@ function formatWindDirection(rotation="none",direction="N",speed="< 1"){
         out.speed = speed;
     }
     return out;
-}
+};
+
+// creating a date jumper with selector
+
+function createDateSelector(dates,elementname,today,short,mid){
+    var dateselector = document.createElement('div');
+    var jumpback = document.createElement('button');
+    jumpback.className = 'btn-dark selectorbtn';
+    jumpback.id = 'jumpbackdate';
+    jumpback.innerHTML = "<<";
+    var jumpforward = document.createElement('button');
+    jumpforward.className = 'btn-dark selectorbtn';
+    jumpforward.id = 'jumpforwarddate';
+    jumpforward.innerHTML = ">>";
+    var stepback = document.createElement('button');
+    stepback.className = 'btn-dark selectorbtn';
+    stepback.innerHTML = " < ";
+    stepback.id='backdate';
+    console.log(stepback);
+    var stepforward = document.createElement('button');
+    stepforward.className = 'btn-dark selectorbtn';
+    stepforward.id = 'fowarddate'; 
+    stepforward.innerHTML = "   >   ";
+    var backbtns = document.createElement('div');
+    backbtns.appendChild(jumpback);
+    backbtns.appendChild(stepback);
+    var fwdbtns = document.createElement('div');
+    fwdbtns.appendChild(stepforward);
+    fwdbtns.appendChild(jumpforward);
+    backbtns.style.width = '33%';
+    fwdbtns.style.width = '33%';
+    var selector = document.createElement('select');
+    selector.id = 'dateselect';
+    var opt;
+    for(i=0; i<dates.length; i++){
+        opt = document.createElement('option');
+        if(dates[i] < today){
+            opt.className = 'histforecast';
+            if(window.location.hash.startsWith("#forecasts")){opt.style.display= 'none'};
+        }else if(dates[i] >= today & dates[i] < short){
+            opt.className = 'shortforecast';
+        }else if(dates[i] >= short & dates[i] < mid){
+            opt.className = 'midforecast';
+        }else{
+            opt.className = 'longforecast';
+        };
+        opt.label = dateFormat(dates[i],"dddd dd mmmm");
+        opt.value = i;
+        if(dates[i] == today){opt.selected = true};
+        opt.onclick = 'jumptodate(this)'; 
+        selector.appendChild(opt);
+    };
+    dateselector.appendChild(backbtns);
+    dateselector.appendChild(selector);
+    dateselector.appendChild(fwdbtns);
+document.getElementById(elementname).innerHTML = dateselector.innerHTML;
+};
+
+// a function to increment date by one
+function forecastdatePlusOne(){
+    let maxlen = document.getElementById('dateselect').length - 1;
+    let temp = forecastdisplayIndex + 1;
+    if(temp > maxlen){temp = maxlen};
+    forecastdisplayIndex = temp;
+    getforecastVar(document.getElementById('forecastplotvar'));
+    document.getElementById('dateselect')[temp].selected=true;
+};
+// a function to step date back by one
+function forecastdateMinusOne(){
+    let temp = forecastdisplayIndex - 1;
+    if(temp < 7){temp = 7};
+    forecastdisplayIndex = temp;
+    getforecastVar(document.getElementById('forecastplotvar'));
+    document.getElementById('dateselect')[temp].selected=true;
+};
+// a function to increment date by one
+function farmdatePlusOne(){
+    let maxlen = document.getElementById('dateselect').length - 1;
+    let temp = displayIndex + 1;
+    if(temp > maxlen){temp = maxlen};
+    displayIndex = temp;
+    getfarmVar(document.getElementById('farmplotvar'));
+    document.getElementById('dateselect')[temp].selected=true;
+};
+// a function to step date back by one
+function farmdateMinusOne(){
+    let temp = displayIndex - 1;
+    if(temp < 0){temp = 0};
+    displayIndex = temp;
+    getfarmVar(document.getElementById('farmplotvar'));
+    document.getElementById('dateselect')[temp].selected=true;
+};
+// a function to jump forward to next date set
+function dateJumpForward(){
+
+};
+// a function to jump back to last date set
+function dateJumpBackward(){
+
+};
+// a function to jump to a given date
+function jumpToDate(){
+
+};
+
 
 ///////////////////////////////////////////////////////
 // Load the map
@@ -677,6 +781,7 @@ const forecastsView = {
         // add in a div for each colour / label combo
         createLegend(cols,labs);
 
+        
 
         // Set up hover effect on the sets 
         var hoveredSetID = null;
@@ -707,6 +812,7 @@ const forecastsView = {
         map.setLayoutProperty("zone-fills", "visibility", "visible");
         $("#myfarmcontainer").addClass("footer-container-step-1");
         $("#mainmap").addClass("map-step-1");
+        
         this.reenter();
     },
 
@@ -721,6 +827,16 @@ const forecastsView = {
         document.getElementById('forecastplotvar').style.display = "block";
         document.getElementById('farmplotvar').style.display = "none";
         getforecastVar(document.getElementById("forecastplotvar"));
+        // add a date picker
+        document.getElementById('myfarm-date-range').innerHTML='emptyit';
+        document.getElementById('myfarm-date-label').innerHTML='';
+        createDateSelector(
+            zones.metadata.dates,
+            'myfarm-date-range',dateFormat(new Date(),'yyyy-mm-dd'),
+            zones.metadata.dates[13],"2020-10-20"
+        );
+        document.getElementById('fowarddate').onclick = forecastdatePlusOne;
+        document.getElementById('backdate').onclick = forecastdateMinusOne;
     },
 
     exit() {
@@ -752,117 +868,7 @@ const myfarmView = {
         labs = ['-100','-80','-60',"-40","-20","0","20"];
         // add in a div for each colour / label combo
         createLegend(cols,labs);
-        // Set up date slider
-        var dateSlider = document.getElementById('myfarm-date-range');
-        var formattedDates = sets.metadata.dates.map(function(d) {
-            return dateFormat(d,"ddd dd mmm"); // use dateFormat to get date as (e.g. Tue 17 April)
-            //return d.substring(6, 8) + "/" + d.substring(4, 6) + "/" + d.substring(0, 4);
-        });
-        var shortFormattedDates = sets.metadata.dates.map(function(d) {
-            return dateFormat(d,"ddd dd"); // use dateFormat to get date as (e.g. Tue 17)
-            //return d.substring(6, 8) + "/" + d.substring(4, 6);
-        });
-        var maxIndex = sets.metadata.dates.length-1;
-        //var startData = "SoilDef";
-        //var displayData = "SoilDef_zero";
-        //var startDate = dateFormat(new Date(), "yyyy-mm-dd"); // get todays date code
-        //var displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
-  
-        noUiSlider.create(dateSlider, {
-            range: {
-                'min': 0,
-                'max': maxIndex
-            },
-            step: 1,
-            //start: Math.round(maxIndex/2), 
-            start: displayIndex, 
-            direction: 'ltr',
-            pips: {
-            mode: 'steps',
-            filter: function(value, type) {
-                if (document.documentElement.clientWidth < 576) {
-                if (value == 0 || value == maxIndex) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-                } else {
-                if (value % 1 == 0) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-                }
-            },
-            format: {
-                to: function(value) {
-                return shortFormattedDates[value];
-                }
-            }
-            },
-            format: {
-            to: function (value) {
-                return Number(value).toFixed(0);
-            },
-            from: function (value) {
-                return Number(value).toFixed(0);
-            }
-            }
-        });
-        dateSlider.noUiSlider.on('update', function(value, handle) {
-            document.getElementById("myfarm-date-label").innerHTML = "Date: " + formattedDates[value];
-            displayIndex = sets.metadata.dates.indexOf(sets.metadata.dates[value]);
-            // need to change the variable being plotted based on date being shown
-            if(displayIndex < 7){displayData = startData+"_hist"}else{displayData = startData+"_zero"};
-            if(startData === "SoilDef"){
-       //update the map
-       map.setPaintProperty('set-fills','fill-color',["interpolate",
-                    ["linear"],
-                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
-                    -100,"#d53e4f",
-                    -80,"#fc8d59",
-                    -60,"#fee08b",
-                    -40,"#ffffbf",
-                    -20,"#e6f598",
-                    -0,"#99d594",
-                    20,"#3288bd",
-                ]);
-        //update the legend colour list
-        cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-        labs = ['-100','-80','-60',"-40","-20","0","20"];
-        } else if (startData === "ET"){
-            map.setPaintProperty('set-fills','fill-color',["interpolate",
-                    ["linear"],
-                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
-                    0,"#d53e4f",
-                    2,"#fc8d59",
-                    4,"#fee08b",
-                    6,"#ffffbf",
-                    8,"#e6f598",
-                    10,"#99d594",
-                    12,"#3288bd",
-                ]);
-                //update the legend colour list
-                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-                labs = ['-100','-80','-60',"-40","-20","0","20"];
-        } else if (startData === "NetApp"){
-                    map.setPaintProperty('set-fills','fill-color',["interpolate",
-                    ["linear"],
-                    ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
-                    0,"#d53e4f",
-                    20,"#fc8d59",
-                    40,"#fee08b",
-                    60,"#ffffbf",
-                    80,"#e6f598",
-                    100,"#99d594",
-                    120,"#3288bd",
-                ]);
-                //update the legend colour list
-                cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
-                labs = ['0','20','40',"60","80","100","120"];
-        };
-        });
-
+        
         // Set up hover effect on the sets 
         var hoveredSetID = null;
         map.on("mousemove", "set-fills", function(e) {
@@ -1020,8 +1026,6 @@ const myfarmView = {
         map.setLayoutProperty("set-fills", "visibility", "visible");
         map.setLayoutProperty("set-borders", "visibility", "visible");
         map.setLayoutProperty("zone-borders", "visibility", "none");
-        getfarmVar(document.getElementById("farmplotvar"));
-
         this.reenter();
     },
 
@@ -1043,6 +1047,19 @@ const myfarmView = {
         getfarmVar(document.getElementById("farmplotvar"));
         document.getElementById('farmplotvar').style.display = "block";
         document.getElementById('forecastplotvar').style.display = "none";
+
+        // add a date picker
+        document.getElementById('myfarm-date-range').innerHTML='emptyit';
+        document.getElementById('myfarm-date-label').innerHTML='';
+        createDateSelector(
+            zones.metadata.dates,
+            'myfarm-date-range',dateFormat(new Date(),'yyyy-mm-dd'),
+            zones.metadata.dates[13],"2020-10-20"
+        );
+        document.getElementById('fowarddate').onclick = farmdatePlusOne;
+        document.getElementById('backdate').onclick = farmdateMinusOne;
+
+
     },
 
     exit() {
