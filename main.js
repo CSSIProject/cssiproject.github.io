@@ -527,8 +527,8 @@ function finishLoading() {
     
     // add fill layer for forecasts
     forecastdisplayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
-    forecaststartData = "DailyPercip50pct_SFC";
-    forecastdisplayData = "DailyPercip50pct_SFC";
+    forecaststartData = "DailyPrecip50pct_SFC";
+    forecastdisplayData = "DailyPrecip50pct_SFC";
     map.addLayer({
         "id": "zone-fills",
         "type": "fill",
