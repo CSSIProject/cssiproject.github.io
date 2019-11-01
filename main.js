@@ -98,7 +98,15 @@ function getfarmVar(set){
     console.log(`getvar displayIndex is: ${displayIndex} and displayData is: $displayData}`);
     if(set.value === "SoilDef"){
        //update the map
-       map.setPaintProperty('set-fills','fill-color',["interpolate",
+       map.setPaintProperty('set-fills','fill-color',[
+        "case",
+        [
+            "<",
+            ["to-number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+            -998
+        ],
+        "#ffffff",
+        ["interpolate",
                     ["linear"],
                     ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     -100,"#d53e4f",
@@ -108,12 +116,20 @@ function getfarmVar(set){
                     -20,"#e6f598",
                     -0,"#99d594",
                     20,"#3288bd",
-                ]);
+                ]]);
         //update the legend colour list
         cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
         labs = ['-100','-80','-60',"-40","-20","0","20"];
         } else if (set.value === "ET"){
-            map.setPaintProperty('set-fills','fill-color',["interpolate",
+            map.setPaintProperty('set-fills','fill-color',[
+                "case",
+                [
+                    "<",
+                    ["to-number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                    -998
+                ],
+                "#ffffff",
+                ["interpolate",
                     ["linear"],
                     ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     0,"#d53e4f",
@@ -123,12 +139,20 @@ function getfarmVar(set){
                     8,"#e6f598",
                     10,"#99d594",
                     12,"#3288bd",
-                ]);
+                ]]);
                 //update the legend colour list
                 cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
                 labs = ['0','2','4',"6","8","10","12"];
         } else if (set.value === "NetApp"){
-                    map.setPaintProperty('set-fills','fill-color',["interpolate",
+                    map.setPaintProperty('set-fills','fill-color',[
+                        "case",
+                        [
+                            "<",
+                            ["to-number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                            -998
+                        ],
+                        "#ffffff",
+                        ["interpolate",
                     ["linear"],
                     ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
                     0,"#d53e4f",
@@ -138,7 +162,7 @@ function getfarmVar(set){
                     80,"#e6f598",
                     100,"#99d594",
                     120,"#3288bd",
-                ]);
+                ]]);
                 //update the legend colour list
                 cols = ["#d53e4f","#fc8d59","#fee08b","#ffffbf","#e6f598","#99d594","#3288bd"];
                 labs = ['0','20','40',"60","80","100","120"];
@@ -152,11 +176,20 @@ function getforecastVar(set){
     forecaststartData = set.value;
     forecastdisplayData = set.value;
 
-    if(set.value === "DailyPrecip50pct_SFC"|set.value === "DailyPrecip25pct_SFC"|set.value === "DailyPrecip75pct_SFC"|set.value === "DailyCWU_SFC"){
+    if(set.value === "DailyPrecip50Pct_SFC"|set.value === "DailyPrecip25Pct_SFC"|set.value === "DailyPrecip75Pct_SFC"|set.value === "DailyCWU_SFC"){
        //update the map
-       map.setPaintProperty('zone-fills','fill-color',["interpolate",
+       console.log(set.value);
+       map.setPaintProperty('zone-fills','fill-color',[
+        "case",
+        [
+            "<",
+            ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+            -998
+        ],
+        "#ffffff",
+        ["interpolate",
                     ["linear"],
-                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
                     1,"#9e0142",
                     5,"#d53e4f",
                     10,"#f46d43",
@@ -167,14 +200,22 @@ function getforecastVar(set){
                     80,"#66c2a5",
                     100,"#3288bd",
                     120,"#5e4fa2",
-                ]);
+                ]]);
         //update the legend colour list
         cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
         labs = ['1','5','10',"15","20","40","60","80","100","120"];
         } else if (set.value === "DailyPoP_SFC"){
-            map.setPaintProperty('zone-fills','fill-color',["interpolate",
+            map.setPaintProperty('zone-fills','fill-color',[
+                "case",
+                [
+                    "<",
+                    ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    -998
+                ],
+                "#ffffff",
+                ["interpolate",
                     ["linear"],
-                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
                     10,"#9e0142",
                     20,"#d53e4f",
                     30,"#f46d43",
@@ -185,25 +226,38 @@ function getforecastVar(set){
                     80,"#66c2a5",
                     90,"#3288bd",
                     100,"#5e4fa2",
-                ]);
+            ]]);
                 //update the legend colour list
                 cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
                 labs = ['10','20','30',"40","50","60","70","80","90","100"];
         } else if (set.value === "MinT_SFC"|set.value === "MaxT_SFC"){
-                    map.setPaintProperty('zone-fills','fill-color',["interpolate",
-                    ["linear"],
-                    ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
-                    -5,"#5e4fa2",
-                    0,"#3288bd",
-                    5,"#66c2a5",
-                    10,"#abdda4",
-                    15,"#e6f598",
-                    20,"#fee08b",
-                    25,"#fdae61",
-                    30,"#f46d43",
-                    35,"#d53e4f",
-                    40,"#9e0142",
-                ]);
+                    map.setPaintProperty(
+                        'zone-fills',
+                        'fill-color',
+                        [
+                            "case",
+                            [
+                                "<",
+                                ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                                -998
+                            ],
+                            "#ffffff",
+                            [
+                                "interpolate",
+                                ["linear"],
+                                ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                                0,"#3288bd",
+                                5,"#66c2a5",
+                                10,"#abdda4",
+                                15,"#e6f598",
+                                20,"#fee08b",
+                                25,"#fdae61",
+                                30,"#f46d43",
+                                35,"#d53e4f",
+                                40,"#9e0142",
+                            ]
+                        ]
+                    );
                 //update the legend colour list
                 cols = ["#5e4fa2","#3288bd","#66c2a5","#abdda4","#e6f598","#fee08b","#fdae61","#f46d43","#d53e4f","#9e0142"];
                 labs = ['-5','0','5',"10","15","20","25","30","35","40"];
@@ -527,8 +581,8 @@ function finishLoading() {
     
     // add fill layer for forecasts
     forecastdisplayIndex = zones.metadata.dates.indexOf(startDate); // get index of todays date
-    forecaststartData = "DailyPrecip50pct_SFC";
-    forecastdisplayData = "DailyPrecip50pct_SFC";
+    forecaststartData = "DailyPrecip50Pct_SFC";
+    forecastdisplayData = "DailyPrecip50Pct_SFC";
     map.addLayer({
         "id": "zone-fills",
         "type": "fill",
@@ -538,6 +592,14 @@ function finishLoading() {
         },
         "paint": {
             "fill-color":
+            [
+                "case",
+                [
+                    "<",
+                    ["to-number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
+                    -998
+                ],
+                "#ffffff",
                 ["interpolate",
                    ["linear"],
                     ["number",["at",["number",forecastdisplayIndex],["get",["string",forecastdisplayData,forecaststartData]]],0],
@@ -551,7 +613,7 @@ function finishLoading() {
                     80,"#66c2a5",
                     100,"#3288bd",
                     120,"#5e4fa2",
-               ],
+            ]],
             "fill-opacity": [
                 "case",
                 ["any", ["boolean", ["feature-state", "hover"], false], ["boolean", ["feature-state", "active"], false]],
@@ -604,6 +666,14 @@ function finishLoading() {
         },
         "paint": {
             "fill-color":
+            [
+                "case",
+                [
+                    "<",
+                    ["to-number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
+                    -998
+                ],
+                "#ffffff",
                 ["interpolate",
                    ["linear"],
                     ["number",["at",["number",displayIndex],["get",["string",displayData,startData]]],0],
@@ -614,7 +684,7 @@ function finishLoading() {
                 -20,"#e6f598",
                 -0,"#99d594",
                 20,"#3288bd",
-               ],
+            ]],
             "fill-opacity": [
                 "case",
                 ["any", ["boolean", ["feature-state", "hover"], false], ["boolean", ["feature-state", "active"], false]],
