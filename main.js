@@ -230,7 +230,7 @@ function getforecastVar(set){
                 //update the legend colour list
                 cols = ["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"];
                 labs = ['10','20','30',"40","50","60","70","80","90","100"];
-        } else if (set.value === "MinT_SFC"|set.value === "MaxT_SFC"){
+        } else if (set.value === "MinT_SFC"|set.value === "MaxT_SFC"|set.value === "Daily_Radn_SFC"){
                     map.setPaintProperty(
                         'zone-fills',
                         'fill-color',
@@ -842,7 +842,8 @@ const currentConditionsView = {
 const forecastsView = {
     __proto__: viewType,
     navitem: "#navitem-forecasts",
-    
+    currentZone: null,
+
     construct() {
         // Set up legend overlay
         // a list of colours and values
@@ -874,8 +875,67 @@ const forecastsView = {
             hoveredSetID = null;
             map.getCanvas().style.cursor = '';
         });
-    
+
+        // add an on click option to forecast zones that bring up some extra data in the footer
+        map.on("click", function(e) {
+            if (!forecastsView.active) {
+                return;
+            }
+            // Detect if the click is on a set or not
+            var features = map.queryRenderedFeatures(e.point, { layers: ['zone-fills'] });
+            if (features.length == 0 || features[0].id == forecastsView.currentZone) {
+                // Clicked out of a block
+                if (forecastsView.currentZone) {
+                    map.setFeatureState({source: "zones", id: forecastsView.currentZone}, {active: false});
+                    forecastsView.currentZone = null;
+                }
+                $("#myfarmcontainer").addClass("footer-container-step-1").removeClass("footer-container-step-2");
+                $("#mainmap").addClass("map-step-1").removeClass("map-step-2");
+                map.resize();
+            } else {
+                // Focus on this block
+
+                // Draw a border around the active block
+                if (forecastsView.currentZone) {
+                    map.setFeatureState({source: "zones", id: forecastsView.currentZone}, {active: false});
+                }
+                forecastsView.currentZone = features[0].id;
+                map.setFeatureState({source: "zones", id: forecastsView.currentZone}, {active: true});           
+                
+                // Adjust the footer size
+                $("#myfarmcontainer").removeClass("footer-container-step-1").addClass("footer-container-step-2");
+                $("#mainmap").removeClass("map-step-1").addClass("map-step-2");
+                map.resize();
+
+                // setup the block summary
+                var matchingFeatures = zones.data.features.filter(function (f) { return f.id == forecastsView.currentZone });    
+                 
+                var description = document.createElement('div');
+                description.className = "forecastSet";
+                description.style.width = '100%';
+                description.style.height = '9rem';
+                description.style['overflow-x'] = "auto";
+                description.style.display  = 'flex';
+                description.style['white-space'] = 'nowrap';
+                for(foreday=7;foreday<zones.metadata.dates.length;foreday++){
+                    tempday = document.createElement('div');
+                    tempday.id = foreday-7;
+                    tempday.className = "forecast-day";
+                    tempday.innerHTML = `<span>${dateFormat(zones.metadata.dates[foreday],"dddd dd/mm")}</span><br>
+                    <span><img src="assets/temp_low.png" class="inline-icon">${matchingFeatures[0].properties.MinT_SFC[foreday]}<img src="assets/temp.png" class="inline-icon">${matchingFeatures[0].properties.MaxT_SFC[foreday]}</span><br>
+                    <span><img src="assets/rain.png" class="inline-icon">${matchingFeatures[0].properties.DailyPrecip75Pct_SFC[foreday]} - ${matchingFeatures[0].properties.DailyPrecip25Pct_SFC[foreday]} mm</span><br>
+                    <span><img src="assets/crop2.png" class="inline-icon">${matchingFeatures[0].properties.DailyCWU_SFC[foreday]} mm</span>`;
+                    description.appendChild(tempday);
+                };
+                document.getElementById("block-heading").innerHTML=`${matchingFeatures[0].properties.cluster}`;
+                document.getElementById("myfarm-summary").innerHTML = description.outerHTML;
+
+            }
+        });
+
     },
+
+    
 
     enter() {
         map.setLayoutProperty("zone-borders", "visibility", "visible");
@@ -960,6 +1020,7 @@ const myfarmView = {
             hoveredSetID = null;
             map.getCanvas().style.cursor = '';
         });
+        // add an on click option to myfarm blocks that bring up some extra data in the footer
         map.on("click", function(e) {
             if (!myfarmView.active) {
                 return;

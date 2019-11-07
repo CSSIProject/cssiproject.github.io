@@ -138,6 +138,13 @@ nav {
   min-width: 7rem;
 }
 
+/* modify popup style */
+.forecast-day {
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 2px ridge #524f4f;
+  padding: 0.2rem 0.2rem;
+}
 
 /* current conditions marker */
 .conditions-marker {
