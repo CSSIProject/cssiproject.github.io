@@ -1126,12 +1126,17 @@ const myfarmView = {
                             yaxis2: {
                                 overlaying: 'y',
                                 side: 'right',
+                                title: 'Irr (mm)'
                             },
                             margin: {
                                 t: 0,
                                 b: 30,
                                 l: 55,
-                                r: 5
+                                r: 55
+                            },
+                            showlegend: false,
+                            legend:{
+                                orientation: 'h',
                             }
                     },
                     {

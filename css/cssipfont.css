@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'cssipfont';
-  src: url('../font/cssipfont.eot?71689764');
-  src: url('../font/cssipfont.eot?71689764#iefix') format('embedded-opentype'),
-       url('../font/cssipfont.woff2?71689764') format('woff2'),
-       url('../font/cssipfont.woff?71689764') format('woff'),
-       url('../font/cssipfont.ttf?71689764') format('truetype'),
-       url('../font/cssipfont.svg?71689764#cssipfont') format('svg');
+  src: url('../font/cssipfont.eot?48062776');
+  src: url('../font/cssipfont.eot?48062776#iefix') format('embedded-opentype'),
+       url('../font/cssipfont.woff2?48062776') format('woff2'),
+       url('../font/cssipfont.woff?48062776') format('woff'),
+       url('../font/cssipfont.ttf?48062776') format('truetype'),
+       url('../font/cssipfont.svg?48062776#cssipfont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'cssipfont';
-    src: url('../font/cssipfont.svg?71689764#cssipfont') format('svg');
+    src: url('../font/cssipfont.svg?48062776#cssipfont') format('svg');
   }
 }
 */
@@ -75,3 +75,4 @@
 .icon-rain:before { content: '\e812'; } /* '' */
 .icon-bom-station-icon:before { content: '\e813'; } /* '' */
 .icon-cane_large_right:before { content: '\e814'; } /* '' */
+.icon-logo_large:before { content: '\e815'; } /* '' */
