@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'cssipfont';
-  src: url('../font/cssipfont.eot?89529030');
-  src: url('../font/cssipfont.eot?89529030#iefix') format('embedded-opentype'),
-       url('../font/cssipfont.woff2?89529030') format('woff2'),
-       url('../font/cssipfont.woff?89529030') format('woff'),
-       url('../font/cssipfont.ttf?89529030') format('truetype'),
-       url('../font/cssipfont.svg?89529030#cssipfont') format('svg');
+  src: url('../font/cssipfont.eot?71689764');
+  src: url('../font/cssipfont.eot?71689764#iefix') format('embedded-opentype'),
+       url('../font/cssipfont.woff2?71689764') format('woff2'),
+       url('../font/cssipfont.woff?71689764') format('woff'),
+       url('../font/cssipfont.ttf?71689764') format('truetype'),
+       url('../font/cssipfont.svg?71689764#cssipfont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'cssipfont';
-    src: url('../font/cssipfont.svg?89529030#cssipfont') format('svg');
+    src: url('../font/cssipfont.svg?71689764#cssipfont') format('svg');
   }
 }
 */
@@ -57,3 +57,21 @@
  
 .icon-info:before { content: '\e800'; } /* '' */
 .icon-login:before { content: '\e801'; } /* '' */
+.icon-cane_large_left:before { content: '\e802'; } /* '' */
+.icon-cane_small_left:before { content: '\e803'; } /* '' */
+.icon-cane_small_right:before { content: '\e804'; } /* '' */
+.icon-cane_small_upright:before { content: '\e805'; } /* '' */
+.icon-cane_upright:before { content: '\e806'; } /* '' */
+.icon-jumpleft:before { content: '\e807'; } /* '' */
+.icon-jumpright:before { content: '\e808'; } /* '' */
+.icon-logo:before { content: '\e809'; } /* '' */
+.icon-mapview:before { content: '\e80a'; } /* '' */
+.icon-step_left:before { content: '\e80b'; } /* '' */
+.icon-step_right:before { content: '\e80c'; } /* '' */
+.icon-temp:before { content: '\e80d'; } /* '' */
+.icon-temp_low:before { content: '\e80e'; } /* '' */
+.icon-wind_calm:before { content: '\e80f'; } /* '' */
+.icon-wind_s:before { content: '\e811'; } /* '' */
+.icon-rain:before { content: '\e812'; } /* '' */
+.icon-bom-station-icon:before { content: '\e813'; } /* '' */
+.icon-cane_large_right:before { content: '\e814'; } /* '' */

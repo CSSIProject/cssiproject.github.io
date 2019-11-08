@@ -16,7 +16,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <a class="navbar-brand" href="#" onclick="currentConditionsView.switchTo()">OptiCane</a>
+      <a class="navbar-brand" href="#" onclick="currentConditionsView.switchTo()"><i class=icon-cane_small_left></i>Opticane</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -24,13 +24,13 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active" id="navitem-currentConditions" data-toggle="collapse" data-target=".navbar-collapse.show">
-            <a class="nav-link" href="#" onclick="currentConditionsView.switchTo()">Current conditions</a>
+            <a class="nav-link" href="#" onclick="currentConditionsView.switchTo()"><i class= icon-bom-station-icon></i>Current conditions</a>
           </li>
           <li class="nav-item" id="navitem-forecasts" data-toggle="collapse" data-target=".navbar-collapse.show">
-            <a class="nav-link" href="#forecasts" onclick="forecastsView.switchTo()">Forecasts</a>
+            <a class="nav-link" href="#forecasts" onclick="forecastsView.switchTo()"><i class= icon-rain></i>Forecasts</a>
           </li>
           <li class="nav-item" id="navitem-myfarm" data-toggle="collapse" data-target=".navbar-collapse.show">
-            <a class="nav-link" href="#myfarm" onclick="myfarmView.switchTo()">My farm</a>
+            <a class="nav-link" href="#myfarm" onclick="myfarmView.switchTo()"><i class= icon-logo></i>My farm</a>
           </li>
         </ul>
         <ul class="navbar-nav navbar-right">
@@ -75,7 +75,7 @@
       </div>
     <div id='legend-body' class='legend-body'></div>
     </div>
-    <div class='map-layer-btn' data-toggle="modal" data-target="#maplayerModal"><i class="icon-login"></i>Map View</div>
+    <div class='map-layer-btn' data-toggle="modal" data-target="#maplayerModal"><i class="icon-mapview" style="font-size:2em; padding-right:6px;"></i></div>
 
     <!-- MAP LAYER OPTIONS -->
     <div class="modal fade" id="maplayerModal" role="dialog" aria-labelledby="maplayerModal" aria-hidden="true">
