@@ -930,6 +930,80 @@ const forecastsView = {
                 document.getElementById("block-heading").innerHTML=`${matchingFeatures[0].properties.cluster}`;
                 document.getElementById("myfarm-summary").innerHTML = description.outerHTML;
 
+                // Draw the plot
+                
+                if (matchingFeatures.length == 1) {
+                    var plotX = zones.metadata.dates;
+            
+                    Plotly.newPlot("myfarm-plot", 
+                        [
+                            { // upper bound of rain forecast 'historical'
+                                y: matchingFeatures[0].properties.DailyPrecip25Pct_SFC_oneday.map((x)=> {if(x <= -999){return null}else{return x}}),
+                                x: plotX,
+                                name: 'pred (mm)',
+                                type: 'bar',
+                                marker: {color: '#00FF00'}
+                            },
+                            { //lower bound of rain forecast 'historical'
+                                y: matchingFeatures[0].properties.DailyPrecip75Pct_SFC_oneday.map((x)=> {if(x <= -999){return null}else{return x}}),
+                                x: plotX,
+                                width: 1,
+                                name: '',
+                                hoverlabel: {bgcolor:'#00FF00'},
+                                type: 'bar',
+                                marker: {color: 'white'},
+                                showlegend: false
+                            },
+                            { // upper bound of rain forecast '
+                                y: matchingFeatures[0].properties.DailyPrecip25Pct_SFC.map((x)=> {if(x <= -999){return null}else{return x}}),
+                                x: plotX,
+                                name: 'pred (mm)',
+                                type: 'bar',
+                                marker: {color: '#00FF00'}
+                            },
+                            { //lower bound of rain forecast
+                                y: matchingFeatures[0].properties.DailyPrecip75Pct_SFC_oneday.map((x)=> {if(x <= -999){return null}else{return x}}),
+                                x: plotX,
+                                width: 1,
+                                name: '',
+                                hoverlabel: {bgcolor:'#00FF00'},
+                                type: 'bar',
+                                marker: {color: 'white'},
+                                showlegend: false
+                            },
+                            { // 'observed' rainfall from silo
+                                y: matchingFeatures[0].properties.daily_rain.map((x)=> {if(x <= -999){return null}else{return x}}),
+                                x: plotX,
+                                name: 'observed',
+                                type: 'scatter',
+                                marker: {color: '#000000'},
+                                showlegend: false
+                            }
+                        ],
+                        {
+                            yaxis: {
+                                title: 'Daily Rainfall  (mm)'
+                            },
+                            margin: {
+                                t: 0,
+                                b: 30,
+                                l: 55,
+                                r: 55
+                            },
+                            showlegend: false,
+                            legend:{
+                                orientation: 'h',
+                            }
+                    },
+                    {
+                        displayModeBar: false,
+                        responsive: true
+                        });
+                } else {
+                    // Don't have SWD data to plot.
+                    $("#myfarm-plot").empty().text("Cannot display SWD data for this block because it was not found in the database.");
+                }
+
             }
         });
 
