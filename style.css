@@ -39,6 +39,9 @@ nav {
   position: sticky;
   top:0;
   background-color: white;
+  border-radius:  10px 10px 0 0;
+  border-top: 2px; 
+  border-color: violet;
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   padding-left: 0.4rem;
@@ -150,6 +153,8 @@ nav {
   border-radius: 0.5rem;
   border: 2px ridge #524f4f;
   padding: 0.2rem 0.2rem;
+  min-width: 33%;
+  margin: 0 0.2rem;
 }
 
 /* current conditions marker */
@@ -269,4 +274,9 @@ font-size:0.7rem;
 .selectorbtn {
   font-size: 1rem;
   width: 50%;
+}
+
+.dateselector {
+  min-width: 34%;
+  font-size: 1rem; 
 }

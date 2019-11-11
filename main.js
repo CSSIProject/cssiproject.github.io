@@ -406,6 +406,7 @@ function createDateSelector(dates,elementname,today,short,mid){
     fwdbtns.style.width = '33%';
     var selector = document.createElement('select');
     selector.id = 'dateselect';
+    selector.className = 'dateselector';
     var opt;
     for(i=0; i<dates.length; i++){
         opt = document.createElement('option');
@@ -419,7 +420,7 @@ function createDateSelector(dates,elementname,today,short,mid){
         }else{
             opt.className = 'longforecast';
         };
-        opt.label = dateFormat(dates[i],"dddd dd mmmm");
+        opt.innerHTML = dateFormat(dates[i],"dddd dd mmmm");
         opt.value = i;
         if(dates[i] == today){opt.selected = true};
         opt.onclick = 'jumptodate(this)'; 
