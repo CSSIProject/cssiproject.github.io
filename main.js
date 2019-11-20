@@ -520,7 +520,7 @@ fetchJSON("https://cssipdata.blob.core.windows.net/weather-forecasts/forecast.ge
     zones = {metadata: metadata, data: data};
     finishLoading();
 });
-fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/aalinton@bigpond.com/Latest.geojson", function(data) {
+fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/justin.sexton1@jcu.edu.au/Latest.geojson", function(data) {
     var metadata = data.metadata;
     delete data.metadata;
     sets = {metadata: metadata, data: data};
@@ -654,7 +654,7 @@ function finishLoading() {
 
     // Load set data
     map.addSource("sets", {"type": "geojson", "data": sets.data});
-    displayIndex = sets.data.features.filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
+    displayIndex = sets.data.features.filter((x) => typeof(x.properties.GraphDate) === "object").filter((x) => x.properties.GraphDate.length > 1)[0].properties.GraphDate.indexOf(startDate); // get index of todays date
     startData = "SoilDef";
     displayData = "SoilDef_zero";
     map.addLayer({
