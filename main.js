@@ -1138,7 +1138,7 @@ const myfarmView = {
                 etvalue = matchingFeatures[0].properties.ET_hist[6].toFixed(2);
                 
                 var lastigindex = Math.max(...matchingFeatures[0].properties.NetApp_hist.map((value,index) => {if(value > 0){return index}else{return -1}}));
-                var nextigindex = matchingFeatures[0].properties.NetApp_zero.findIndex((x) => x > 0);
+                var nextigindex = matchingFeatures[0].properties.NetApp_default.findIndex((x) => x > 0);
                 if(lastigindex < 0){
                     lastigtext = "no irrigation last week";
                 }else{
@@ -1147,7 +1147,7 @@ const myfarmView = {
                 if(nextigindex < 0){
                     nextigtext = "no irrigation scheduled";
                 }else{
-                    nextigtext = `${matchingFeatures[0].properties.NetApp_zero[nextigindex].toFixed(2)} mm on  ${dateFormat(matchingFeatures[0].properties.GraphDate[nextigindex],"dd mmm")}`
+                    nextigtext = `${matchingFeatures[0].properties.NetApp_default[nextigindex].toFixed(2)} mm on  ${dateFormat(matchingFeatures[0].properties.GraphDate[nextigindex],"dd mmm")}`
                 };
     
                 var description =
@@ -1174,7 +1174,24 @@ const myfarmView = {
                           marker: {color: '#000000'}
                          },
                          {x: plotX,
-                          y: matchingFeatures[0].properties["SoilDef_zero"],
+                            y: matchingFeatures[0].properties["SoilDef_low"],
+                            type: 'bar',
+                            name: '',
+                            
+                            width: 1,
+                            hoverlabel: {bgcolor:'#00FF00'},
+                            marker: {color: 'white'},
+                            showlegend: false
+                        },
+                        {x: plotX,
+                            y: matchingFeatures[0].properties["SoilDef_high"],
+                            type: 'bar',
+                            name: 'pred (mm)',
+                            yaxis: 'y',
+                            marker: {color: '#00FF00'}
+                        },
+                         {x: plotX,
+                          y: matchingFeatures[0].properties["SoilDef_default"],
                           type: 'scatter',
                           name: 'ZeroRainfall',
                           yaxis: 'y',
@@ -1188,7 +1205,7 @@ const myfarmView = {
                         marker: {color: '#000000'}
                          },
                          {x: plotX,
-                          y: matchingFeatures[0].properties["NetApp_zero"],
+                          y: matchingFeatures[0].properties["NetApp_default"],
                           type: 'bar',
                           name: 'irrig_schedule',
                           yaxis: 'y2',
