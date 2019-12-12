@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { compileFunction } from 'vm';
-import { render } from '@testing-library/react';
 import Navigation from './navbar/Navigation';
 import Mapcontainer from './Mapcontainer/Map';
 import Maplayer from './Mapcontainer/Maplayer';
 import Maplegend from './Mapcontainer/Maplegend';
+import Footercontainer from './footer/footer';
 
 ReactDOM.render(
-    <Navigation />,
-    <Mapcontainer />,
-    <Maplayer />,
-    <Maplegend />,
+    <div>
+    <Navigation />
+    <Mapcontainer />
+    <Maplayer />
+    <Maplegend />
+    <Footercontainer />
+    </div>,
     document.getElementById('root')
 );
