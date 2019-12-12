@@ -1,0 +1,16 @@
+/* ##### Styles for the layer switching buttons ##### */
+
+/* Style for layer switching button */
+.map-layer-btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    background: rgba(255, 255, 255, 0.8);
+    margin-left: 1rem;
+    margin-top: 4rem;
+    font-family: Arial, sans-serif;
+    overflow: auto;
+    border-radius: 3px;
+    justify-content: left;
+}

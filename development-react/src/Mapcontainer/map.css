@@ -1,0 +1,43 @@
+/* ##### CSS styling file for map container ##### */
+
+/* Map container */
+#mainmap {
+    position: absolute;
+    top: 3.5rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+}
+
+/* I assume this is for an empty map. Not used */
+.fakemap {
+    background: rgb(248, 245, 245);
+}
+  
+/* resized map: step size 1 */
+#mainmap.map-step-1 {
+  bottom: 3.4rem;
+}
+
+/* resized map: step size 2 */
+#mainmap.map-step-2 {
+    bottom: 15.6rem;
+}
+
+/* modify popup style */
+.mapboxgl-popup-content {
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 2px ridge #524f4f;
+    padding: 0.2rem 0.2rem;
+    position: absolute;
+    box-shadow: 1px 1px 2px rgba(30, 30, 30, 0.2);
+    min-width: 7rem;
+  }
+  /* resize map for lager screens */
+@media (min-width: 992px) {
+    #mainmap.map-step-2 {
+      bottom: 26.6rem;
+    }
+}
