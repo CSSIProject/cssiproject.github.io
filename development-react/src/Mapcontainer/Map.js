@@ -4,9 +4,13 @@ import './map.css';
 
 
 class Mapcontainer extends Component {
+    constructor(props){
+        super(props);
+
+    }
     render(){
         return (
-                <div className="mainmap"> Place Map Here </div>
+                <div id="mainmap" className={this.props.footeron ? "map-step-1": "map-step-2"}> Place Map Here </div>
         );
     }
 }

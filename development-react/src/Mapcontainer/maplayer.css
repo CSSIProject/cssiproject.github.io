@@ -14,3 +14,7 @@
     border-radius: 3px;
     justify-content: left;
 }
+/* style for button group so modal buttons fill modal container */
+.map-layer-modal-btngrp{
+    width: 100%;
+}
