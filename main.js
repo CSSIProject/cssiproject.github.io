@@ -1167,14 +1167,14 @@ const myfarmView = {
             
                     Plotly.newPlot("myfarm-plot", 
                         [{x: plotX,
-                          y: matchingFeatures[0].properties["SoilDef_hist"],
+                          y: matchingFeatures[0].properties["SoilDef_hist"].map((x)=> {if(x <= -999){return null}else{return x}}),
                           type: 'scatter',
                           name: 'current',
                           yaxis: 'y',
                           marker: {color: '#000000'}
                          },
                          {x: plotX,
-                            y: matchingFeatures[0].properties["SoilDef_low"],
+                            y: matchingFeatures[0].properties["SoilDef_low"].map((x)=> {if(x <= -999){return null}else{return x}}),
                             type: 'bar',
                             name: '',
                             
@@ -1184,28 +1184,28 @@ const myfarmView = {
                             showlegend: false
                         },
                         {x: plotX,
-                            y: matchingFeatures[0].properties["SoilDef_high"],
+                            y: matchingFeatures[0].properties["SoilDef_high"].map((x)=> {if(x <= -999){return null}else{return x}}),
                             type: 'bar',
                             name: 'pred (mm)',
                             yaxis: 'y',
                             marker: {color: '#00FF00'}
                         },
                          {x: plotX,
-                          y: matchingFeatures[0].properties["SoilDef_default"],
+                          y: matchingFeatures[0].properties["SoilDef_default"].map((x)=> {if(x <= -999){return null}else{return x}}),
                           type: 'scatter',
                           name: 'ZeroRainfall',
                           yaxis: 'y',
                           marker: {color: '#0000FF'}
                          },
                         {x: plotX,
-                         y: matchingFeatures[0].properties["NetApp_hist"],
+                         y: matchingFeatures[0].properties["NetApp_hist"].map((x)=> {if(x <= -999){return null}else{return x}}),
                          type: 'bar',
                          name: 'irrig_applied',
                          yaxis: 'y2',
                         marker: {color: '#000000'}
                          },
                          {x: plotX,
-                          y: matchingFeatures[0].properties["NetApp_default"],
+                          y: matchingFeatures[0].properties["NetApp_default"].map((x)=> {if(x <= -999){return null}else{return x}}),
                           type: 'bar',
                           name: 'irrig_schedule',
                           yaxis: 'y2',
@@ -1280,9 +1280,9 @@ const myfarmView = {
         document.getElementById('myfarm-date-range').innerHTML='emptyit';
         document.getElementById('myfarm-date-label').innerHTML='';
         createDateSelector(
-            zones.metadata.dates,
+            sets.metadata.dates,
             'myfarm-date-range',dateFormat(new Date(),'yyyy-mm-dd'),
-            zones.metadata.dates[13],"2020-10-20"
+            sets.metadata.dates[13],"2020-10-20"
         );
         document.getElementById('fowarddate').onclick = farmdatePlusOne;
         document.getElementById('backdate').onclick = farmdateMinusOne;
