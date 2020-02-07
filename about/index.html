@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="../lib/date.format.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
+    <link rel="stylesheet" href="../css/cssipfont.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet'>
+    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <a class="navbar-brand" href="#" onclick="currentConditionsView.switchTo()" ><i class="icon-cane_small_left"></i>Opticane</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active" id="navitem-currentConditions" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="../#" onclick="currentConditionsView.switchTo()"><i class= icon-bom-station-icon></i>Current conditions</a>
+          </li>
+          <li class="nav-item" id="navitem-forecasts" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="../#forecasts" onclick="forecastsView.switchTo()"><i class= icon-rain></i>Forecasts</a>
+          </li>
+          <li class="nav-item" id="navitem-myfarm" data-toggle="collapse" data-target=".navbar-collapse.show">
+            <a class="nav-link" href="../#myfarm" onclick="myfarmView.switchTo()"><i class= icon-logo></i>My farm</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-right">
+            <li class="nav-item dropdown">
+                <a class ="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="icon-info" ></i>Info</a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/about/">About</a>
+                  <a class="dropdown-item" href="/about/#about-weather">Weather</a>
+                  <a class="dropdown-item" href="/about/#about-forecasts">Forecasts</a>
+                  <a class="dropdown-item" href="/about/#about-myfarm">My Farm</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/about/#contacts">Contact Us</a>
+                </ul>
+            </li>
+            <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+              <a class="nav-link" data-toggle="modal" data-target="#signupModal" href="#"><i class="icon-login" ></i> Login</a>
+            </li>
+         </ul>
+      </div>
+    </nav>
+
+    <div class='aboutpage'> 
+      <div class='aboutheader' id="about">The CSSIP Story</div>
+      <div id='about' class='abouttxt'>
+        The CSSIP project aims to help farmers improve their sugarcane irrigation management.<br/>
+        We are:<br/>
+        <br/>
+        <ul>  Developing improved weather forecasts that account for variability across the Burdekin catchment;</ul> 
+        <ul>  Integrating the weather forecasts within a crop model such as IrrigWeb; and</ul>
+        <ul>  Building software that empowers farmers to irrigate more efficiently.</ul>   
+      </div>
+      <div class='abouttxt'>The CSSIP project will develop weather forecasts with improved spatial resolution, accounting for the regional variability across the Burdekin catchment. Using historical weather data, we have identified five climate zones [image]. The project will generate different weather forecasts for each zone. These will be based upon the Bureau of Meteorology forecasts but “downscaled” to account for systematic differences between zones. Improved spatial resolution in weather forecasts means that farmers can access more accurate information, allowing for better decision making and improved farm management.<br/></div>
+      <div class='imgbox'>
+        <img src= '../assets/map.PNG' class='aboutfig' alt="Climate zones for Burdekin"></img><br/>
+        Five climate zones in the Burdekin sugarcane growing region. More details on climate zones can be found <a href="https://jdsextonjcu.shinyapps.io/HerbertClusters/">here</a>
+      </div>          
+      <div class='abouttxt'>
+        Existing crop models (like IrrigWeb) consider only past rainfall when producing irrigation advice. However, it may be a good management strategy to delay irrigation if heavy rain is predicted. This strategy must be balanced against the confidence in the forecast and the risk of over- or under-irrigating. By using the software as a co-learning tool, farmers and extension officers can explore the impact of alternative future scenarios and different management interventions.
+      </div>
+      <div class='abouttxt'>
+        The software will also incorporate long-term forecasts. For example, the likelihood of this season being wetter or drier than average can factor into irrigation planning, especially if the total water budget is limited.
+      </div>
+      <div class='aboutheader' id="contacts">Contacts</div>
+      <div class='abouttxt'>
+        Bronson Phillipa<br/>
+        <div class='d-inline-block align-middle pr-3'>
+            <div class='headshot border border-white'><img src='../assets/BP-headshot.jpg'></img></div>
+        </div>
+        <div class='d-inline-block align-middle'>
+            Senior Lecturer<br/>
+            College of Science and Engineering<br/>
+            James Cook University<br/>
+            links: <a href="https://research.jcu.edu.au/portfolio/bronson.philippa/">JCU</a><br/>
+            email: <a href="mailto:bronson.philippa@jcu.edu.au?subject=RE: Opticane">bronson.philippa@jcu.edu.au</a>
+        </div>
+      </div>
+      <div class='abouttxt'>
+        Yvette Everingham<br/>
+        <div class='d-inline-block align-middle pr-3'>
+            <div class='headshot border border-white'><img src='../assets/YE-headshot.jpg'></img></div>
+        </div>
+        <div class='d-inline-block align-middle'>
+            Professor, Promotional Chair<br/>
+            College of Science and Engineering<br/>
+            James Cook University<br/>
+            links: <a href="https://research.jcu.edu.au/portfolio/yvette.everingham/">JCU</a><br/>
+            email: <a href="mailto:yvette.everingham@jcu.edu.au?subject=RE: Opticane">yvette.everingham@jcu.edu.au</a>
+        </div>
+      </div>
+      <div class='abouttxt'>
+        Steve Attard<br/>
+        <div class='d-inline-block align-middle pr-3'>
+            <div class='headshot border border-white'><img src='../assets/SA-headshot.jpg'></img></div>
+        </div>
+        <div class='d-inline-block align-middle'>
+            Managing Director<br/>
+            AgriTech Solutions<br/>
+            links: <a href="https://agritechsolutions.com.au/about-us/">agritechsolutions</a><br/>
+            email: <a href="mailto:steve@agritechsolutions.com.au?subject=RE: Opticane">steve@agritechsolutions.com.au</a>
+        </div>
+      </div>
+      <div class='aboutheader' id="about-weather">Weather</div>
+      <div class='abouttxt'>
+        Recent weather observations for select BOM stations are presented on the Weather page via clickable map. Simply click or tap on a BOM icon <Icon name='bom-icon'></Icon> for the latest available observations from BOM. Currently data are only available for select BOM weather stations. We hope to provide more local weather stations soon.
+      </div>
+      <div class='imgbox'>
+        <img src='../assets/weather.gif' class='aboutfig' alt="Weather icon gif" width="50%"></img><br/>
+        The Weather page displays BOM weather stations. Clicking on a weather station icon displays the most recent weather observations.
+      </div>
+      <div class='aboutheader' id="about-forecasts">Forecasts</div>
+      <div class='abouttxt'>
+        Forecasts provides Short (7 day) and Medium (20 day) weather forecasts developed by CSSIP. Forecasts provided include rainfall, maximum and minimum temperatures morning and evening wind speeds and direction as well as crop water use. Crop water use is provided for a full canopy sugarcane crop. Forecast data are mapped for each region. Mapped data includes the Median forecast value for Maximum and Minimum temperatures and wind speed. A lower and higher forecast rainfall are also provided with a 1-in-4 chance of rainfall being above the upper rainfall level and a 1-in-4 chance of rainfall below the lower rainfall level. The displayed forecast can be selected from the legend.[image] 
+      </div>
+      <div class='abouttxt'> 
+        The displayed forecast period (daily for short-term and weekly for medium-term forecasts) can be changed using the date arrows or date picker tool. Forward and Back arrows step through one forecast period at a time. 'Fast-Forward' and 'Rewind' buttons step directly from short to medium-term forecasts.[image] 
+      </div>
+      <div class='abouttxt'>
+        Further details for each climate zone can be obtained by clicking on the map. This provides forecast data for the selected period as well as a plot showing the short-term rainfall forecast and recent observations for comparison. Rainfall forecasts are represent by a bar showing the upper and lower rainfall bounds. This represents a 50% chance range (1-in 4 chance of less and 1-in-4 chance of higher rainfall) [image]. 
+      </div>
+      <div class='aboutheader' id="about-myfarm">My Farm</div>
+      <div class='abouttxt'>
+        My Farm provides sugarcane crop water status and irrigation advice at a block level. MyFarm is only available to registered users. Registered users are provided with irrigation and crop soil water status forecasts based on local weather forecasts. For an entry level registered user this information is provided for each climate zone, for a selected range of cropping systems. Further specifc details are provided for users who register with a personal irriweb account. Simply register with your Irrigweb email address.   
+      </div>
+      <div class='abouttxt'>
+        My Farm provides a forecast of soil water deficit (SWD), daily crop water use (Evapotranspiration) as well as scheduled irrigation amounts. Selecting a particular block will provide further details including a time series plot of SWD. The SWD plot provides a forecast range based on forecast rainfall as well as baseline SWD value for a no rainfall scenario as well as the effects of any scheduled irrigation events. Users can use this plot as a tool to decide if scheduled irrigation events should be changed.[image]
+      </div>
+  </div>
+  <!-- General CSSIP login -->
+  <div class="modal fade" id="signupModal" role="dialog" aria-labelledby="signupModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class= "modal-content">
+        <div class= "modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> 
+        <div class="modal-body">
+          <form action="/action_page.php">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email address</label>
+              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="../lib/nouislider.min.js"></script>
+</body>
+</html>

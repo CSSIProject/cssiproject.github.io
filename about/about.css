@@ -1,0 +1,48 @@
+.aboutpage{
+    position:absolute;
+    background-color: rgb(56, 56, 56);
+    top: 56px;
+    z-index:-2;
+}
+.aboutheader{
+    text-align: left;
+    font-size: large;
+    font-weight: bold;
+    color: white;
+    margin: 5vh 4vw 0vh 2.5vw;
+}
+.aboutheader::before{
+    display: block;
+    content: " ";
+    margin-top: -60px;
+    height: 60px;
+    visibility: hidden;
+    pointer-events: none;
+}
+.abouttxt{
+    text-align: justify;
+    font-size: medium;
+    margin: 2.5vh 4vw 0vh 5vw;
+    color: white;
+}
+.aboutfig{
+    max-width: 90vw;
+
+}
+.headshot{
+    max-width: 150px;
+    max-height: 150px;
+    overflow: hidden;
+    margin-right: 20px;
+}
+.headshot{
+    max-width: 150px;
+    max-height: 150px;
+}
+.imgbox{
+    margin: 2.5vh 4vw 0vh 5vw;
+    text-align: center;
+    font-size: medium;
+    margin: 2.5vh 4vw 0vh 5vw;
+    color: white;
+}
