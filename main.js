@@ -529,40 +529,7 @@ fetchJSON("https://cssipdata.blob.core.windows.net/irrigweb-data/justin.sexton1@
 
 
 
-// When a click occurs on a feature in the bom-stations layer, open a popup at the
-// location of the feature, with ....
 
-map.on('click', 'bom-stations', function (e) {
-    var coordinates = e.features[0].geometry.coordinates.slice();
-    console.log(`${e.features[0].properties.local_times[JSON.parse(e.features[0].properties.local_times).length-1]} on ${e.features[0].properties.apparent_t[JSON.parse(e.features[0].properties.apparent_t).length-1]}`);
-    var dir = formatWindDirection(null,JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1],JSON.parse(e.features[0].properties.wind_spd_kmh)[JSON.parse(e.features[0].properties.wind_spd_kmh).length-1]);
-    var windicon;
-    if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
-    var description =  
-        '<div class="popup-content">' +
-        `<div title="site">${e.features[0].properties.name}</div>` +
-        `<div title="${e.features[0].properties.last_issued}">${e.features[0].properties.last_issued.slice(10,22)}</div>` +
-        `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
-        ${JSON.parse(e.features[0].properties.apparent_t)[JSON.parse(e.features[0].properties.apparent_t).length-1]}&deg;C</div>` +
-        //`<div title="Wind direction and speed"><img src="assets/wind_${JSON.parse(e.features[0].properties.wind_dir)[JSON.parse(e.features[0].properties.wind_dir).length-1]}.png" class="inline-icon" title="Wind from the east">
-        `<div title="Wind direction and speed"><img src=${windicon} class="inline-icon" style="transform:rotate(${dir.rotation.toFixed()}deg);" title="Wind from the east">
-        ${dir.speed} km/h
-        ${dir.direction}</div>` +
-        `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
-        ${JSON.parse(e.features[0].properties.rain_trace)[JSON.parse(e.features[0].properties.rain_trace).length-1]} mm</div>` +
-        '</div>';
-     
-    // Ensure that if the map is zoomed out such that multiple
-    // copies of the feature are visible, the popup appears
-    // over the copy being pointed to.
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-    new mapboxgl.Popup()
-    .setLngLat(coordinates)
-    .setHTML(description)
-    .addTo(map);
-});
 
 // fetch BOM observations geojson from Azure blob storage
 // fetchJSON("weather-stations.geojson", function(data) {
@@ -810,11 +777,65 @@ function addSource(map, setname, source, callback) {
 const currentConditionsView = {
     __proto__: viewType,
     navitem: "#navitem-currentConditions",
-    markers: [],
+    currentSite:null,
 
+    construct(){
+
+        // When a click occurs on a feature in the bom-stations layer, open a popup at the
+        // location of the feature, with ....
+
+    map.on('click',function (e) {
+        // Detect if the click is on a set or not
+        var features = map.queryRenderedFeatures(e.point, { layers: ["bom-stations"] });
+        console.log(features[0]);
+        if (features.length == 0 || features[0].properties.ID == currentConditionsView.currentSite) {
+            // Clicked out of a block
+            if (currentConditionsView.currentSite) {
+                map.setFeatureState({source: "stations", id: currentConditionsView.currentSite}, {active: false});
+                currentConditionsView.currentSite = null;
+            }
+            $("#myfarmcontainer").addClass("footer-container-step-1").removeClass("footer-container-step-2");
+            $("#mainmap").addClass("map-step-1").removeClass("map-step-2");
+            if(currentConditionsView){document.getElementById("myfarm-date-range").innerHTML=`<div class='footer-heading'>Select a Station for more details</div>`};
+            map.resize();
+        } else {
+            currentConditionsView.currentSite = features[0].properties.ID;
+	        $("#myfarmcontainer").addClass("footer-container-step-2").removeClass("footer-container-step-1");
+            $("#mainmap").addClass("map-step-2").removeClass("map-step-1");
+            map.resize();
+
+
+	
+            var dir = formatWindDirection(null,JSON.parse(features[0].properties.wind_dir)[JSON.parse(features[0].properties.wind_dir).length-1],JSON.parse(features[0].properties.wind_spd_kmh)[JSON.parse(features[0].properties.wind_spd_kmh).length-1]);
+            var windicon;
+            if(dir.direction==="CALM"){windicon = "asset/wind_CALM.png"} else {windicon = "assets/wind_S.png"};
+            var description =  
+                '<div class="popup-content">' +
+                    `<div title="${features[0].properties.last_issued}"></br>Issued: ${features[0].properties.last_issued.slice(10,22)}</div>` +
+                    `<div title="Current temperature"><img src="assets/temp.png" class="inline-icon">
+                        ${JSON.parse(features[0].properties.apparent_t)[JSON.parse(features[0].properties.apparent_t).length-1]}&deg;C
+                    </div>` +
+                    `<div title="Wind direction and speed"><img src=${windicon} class="inline-icon" style="transform:rotate(${dir.rotation.toFixed()}deg);" title="Wind from the east">
+                        ${dir.speed} km/h
+                        ${dir.direction}</div>` +
+                    `<div title="Rain since 9am"><img src="assets/rain.png" class="inline-icon">
+                        ${JSON.parse(features[0].properties.rain_trace)[JSON.parse(features[0].properties.rain_trace).length-1]} mm
+                    </div>` +
+                '</div>';
+            document.getElementById("myfarm-summary").innerHTML = description;
+            $("#myfarm-plot").empty();
+            $("#myfarm-date-range").empty();
+            document.getElementById("block-heading").innerHTML=`Station:  ${features[0].properties.name}`;
+
+        }
+    });
+
+    },
     enter() {
-        $("#myfarmcontainer").addClass("footer-container-step-0");
+        $("#myfarmcontainer").addClass("footer-container-step-1");
+        $("#mainmap").addClass("map-step-1");
         $("#legend").addClass("map-overlay-step-0");
+        document.getElementById("myfarm-date-range").innerHTML=`<div class='footer-heading'>Select a Station for more details</div>`;
         this.reenter();
     },
 
@@ -825,11 +846,9 @@ const currentConditionsView = {
 
     exit() {
         map.setLayoutProperty("bom-stations", "visibility", "none");
-        $("#myfarmcontainer").removeClass("footer-container-step-0");
+        $("#myfarmcontainer").removeClass("footer-container-step-1").removeClass("footer-container-step-2");
         $("#legend").removeClass("map-overlay-step-0");
-        this.markers.forEach(function(m) {
-            m.remove();
-        })
+		$("#mainmap").removeClass("map-step-1").removeClass("map-step-2");
     }
 };
 
